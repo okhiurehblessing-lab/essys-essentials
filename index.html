@@ -5,1047 +5,906 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>My Store</title>
 <style>
-  /* Reset & basics */
-  body,html {
-    margin:0; padding:0; font-family: Arial, sans-serif;
-    background: var(--bg-color, #fff);
-    color: var(--text-color, #111);
-    transition: background-color 0.3s, color 0.3s;
+  /* ==== BASE STYLES ==== */
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0; padding: 0;
+    background: var(--bg-color);
+    color: var(--text-color);
+    transition: background 0.3s, color 0.3s;
   }
   :root {
     --bg-color: #fff;
-    --text-color: #111;
-    --btn-bg: #007bff;
-    --btn-text: #fff;
-    --highlight-color: #ffc107;
+    --text-color: #222;
+    --primary-color: #007bff;
+    --secondary-color: #555;
+    --highlight-color: #28a745;
+    --button-bg: var(--primary-color);
+    --button-text: #fff;
+    --input-bg: #fff;
+    --input-border: #ccc;
+    --header-bg: #f8f9fa;
+    --card-bg: #fafafa;
   }
   body.dark {
     --bg-color: #121212;
     --text-color: #eee;
-    --btn-bg: #1a73e8;
-    --btn-text: #eee;
-    --highlight-color: #f9a825;
+    --primary-color: #3399ff;
+    --secondary-color: #aaa;
+    --highlight-color: #44dd77;
+    --button-bg: var(--primary-color);
+    --button-text: #000;
+    --input-bg: #222;
+    --input-border: #555;
+    --header-bg: #222;
+    --card-bg: #1e1e1e;
   }
-  button {
-    cursor:pointer;
-    background: var(--btn-bg);
-    color: var(--btn-text);
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    transition: background 0.3s;
-  }
-  button:hover {
-    background: var(--highlight-color);
-  }
+
   a {
-    color: var(--btn-bg);
+    color: var(--primary-color);
     text-decoration: none;
   }
   a:hover {
     text-decoration: underline;
   }
-  h2 {
-    margin-top:0;
-  }
-  .hidden {display:none;}
-  /* Layout */
-  #shopping-area {
-    max-width: 960px;
-    margin: 0 auto;
+
+  /* ==== HEADER ==== */
+  header {
+    background: var(--header-bg);
     padding: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+  #dark-mode-toggle {
+    cursor: pointer;
+    background: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+  }
+
+  /* ==== MAIN CONTAINER ==== */
+  main {
+    max-width: 1100px;
+    margin: 1rem auto;
+    padding: 0 1rem;
+  }
+
+  /* ==== LOGIN ==== */
+  #login-section {
+    max-width: 400px;
+    margin: 4rem auto;
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  }
+  #login-section h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+  }
+  #login-section label {
+    display: block;
+    margin: 0.8rem 0 0.2rem;
+  }
+  #login-section input[type=email],
+  #login-section input[type=password] {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--text-color);
+  }
+  #login-section button {
+    margin-top: 1rem;
+    width: 100%;
+    padding: 0.8rem;
+    background: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  /* ==== ADMIN PANEL ==== */
+  #admin-panel {
+    display: none;
+  }
+  #admin-panel h2 {
+    margin-top: 0;
+  }
+  #admin-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  #admin-tabs button {
+    background: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  #admin-tabs button.active {
+    background: var(--highlight-color);
+    color: #000;
+  }
+
+  /* ==== ADMIN SECTIONS ==== */
+  .admin-section {
+    display: none;
+  }
+  .admin-section.active {
+    display: block;
+  }
+
+  /* ==== PRODUCTS ADMIN ==== */
+  #product-form {
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+  #product-form label {
+    display: block;
+    margin: 0.5rem 0 0.2rem;
+  }
+  #product-form input[type=text],
+  #product-form input[type=number],
+  #product-form textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--text-color);
+    resize: vertical;
+  }
+  #product-form textarea {
+    height: 80px;
+  }
+  #product-form button {
+    margin-top: 0.8rem;
+    padding: 0.6rem 1rem;
+    background: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  #product-list {
+    margin-top: 1rem;
+  }
+  .product-item-admin {
+    background: var(--card-bg);
+    padding: 0.6rem;
+    margin-bottom: 0.5rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .product-item-admin div {
+    flex: 1;
+    margin-left: 1rem;
+  }
+  .product-item-admin img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border-radius: 4px;
+    border: 1px solid var(--input-border);
+  }
+  .product-item-admin button {
+    margin-left: 0.5rem;
+    background: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  /* ==== STORE CUSTOMIZATION ==== */
+  #store-customization label {
+    display: block;
+    margin: 0.5rem 0 0.2rem;
+  }
+  #store-customization input[type=text],
+  #store-customization textarea,
+  #store-customization select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    background: var(--input-bg);
+    color: var(--text-color);
+  }
+  #store-customization textarea {
+    height: 100px;
+  }
+  #store-customization button {
+    margin-top: 1rem;
+    padding: 0.6rem 1rem;
+    background: var(--button-bg);
+    color: var(--button-text);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  #background-patterns {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+  .pattern-option {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    background-size: cover;
+    background-position: center;
+  }
+  .pattern-option.selected {
+    border-color: var(--highlight-color);
+  }
+
+  /* ==== STORE FRONT ==== */
+  #shopping-area {
+    display: none;
   }
   #products-grid {
     display: grid;
-    grid-template-columns: repeat(2,1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
   }
   .product-card {
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 0.5rem;
-    background: var(--card-bg, #fefefe);
-  }
-  body.dark .product-card {
-    border-color: #444;
-    background: #222;
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
   .product-card img {
-    max-width: 100%;
-    border-radius: 6px;
-  }
-  .product-info {
-    margin-top: 0.5rem;
-  }
-  .product-info h3 {
-    margin: 0 0 0.3rem;
-  }
-  .product-options label {
-    display: block;
-    font-weight: bold;
-    margin-top: 0.5rem;
-  }
-  .cart-area, #checkout, #login-screen, #admin-panel {
-    max-width: 480px;
-    margin: 1rem auto;
-    padding: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background: var(--card-bg, #fefefe);
-  }
-  body.dark .cart-area, body.dark #checkout, body.dark #login-screen, body.dark #admin-panel {
-    border-color: #444;
-    background: #222;
-  }
-  #cart-items div {
-    margin-bottom: 0.7rem;
-  }
-  #cart-items strong {
-    display: block;
-  }
-  label {
-    display:block;
-    margin: 0.3rem 0 0.1rem;
-  }
-  input[type=text], input[type=email], input[type=number], textarea, select {
     width: 100%;
-    padding: 6px;
-    border: 1px solid #ccc;
+    height: 140px;
+    object-fit: contain;
     border-radius: 4px;
-    font-size: 1rem;
-    box-sizing: border-box;
   }
-  textarea {
-    resize: vertical;
+  .product-card h3 {
+    margin: 0.5rem 0 0.2rem;
+    font-size: 1.1rem;
   }
-  #admin-products-list .admin-product {
+  .product-card p {
+    flex: 1;
+    font-size: 0.9rem;
+    margin: 0.3rem 0;
+  }
+  .product-card select,
+  .product-card input[type=number] {
+    margin-top: 0.5rem;
+    width: 100%;
+    padding: 0.4rem;
+    border-radius: 4px;
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
+    color: var(--text-color);
+  }
+  .quantity-selector {
     display: flex;
     align-items: center;
-    margin-bottom: 1rem;
-    gap: 0.7rem;
+    margin-top: 0.5rem;
   }
-  #admin-products-list .admin-product img {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 6px;
-  }
-  #admin-products-list .admin-product div:last-child button {
-    margin-left: 0.3rem;
-  }
-  .admin-btn {
-    background: var(--btn-bg);
-    color: var(--btn-text);
+  .quantity-selector button {
+    padding: 0.3rem 0.6rem;
+    font-size: 1.1rem;
+    background: var(--button-bg);
+    color: var(--button-text);
     border: none;
-    padding: 4px 8px;
+    cursor: pointer;
     border-radius: 4px;
-    font-size: 0.9rem;
   }
-  #customization-form > div {
-    margin-bottom: 0.8rem;
+  .quantity-selector input {
+    width: 40px;
+    text-align: center;
+    border: 1px solid var(--input-border);
+    margin: 0 0.3rem;
+    border-radius: 4px;
+    padding: 0.2rem 0;
+    background: var(--input-bg);
+    color: var(--text-color);
   }
-  #background-preview {
+  .add-to-cart-btn {
+    margin-top: 0.7rem;
+    padding: 0.6rem;
     width: 100%;
-    height: 120px;
-    background-size: cover;
-    background-position: center;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+    background: var(--highlight-color);
+    color: #000;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: 600;
   }
-  .overlay-option {
-    margin-right: 0.8rem;
-  }
-  /* Pagination */
+
+  /* ==== PAGINATION ==== */
   #pagination {
     margin: 1rem 0;
     text-align: center;
   }
   #pagination button {
-    margin: 0 0.3rem;
+    background: var(--button-bg);
+    border: none;
+    color: var(--button-text);
+    margin: 0 0.25rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: pointer;
   }
-  /* Decorative overlays */
-  .overlay-butterflies, .overlay-hearts, .overlay-spirals {
-    pointer-events:none;
-    position: fixed;
-    top: 0; left: 0; width: 100vw; height: 100vh;
-    z-index: 0;
-    opacity: 0.1;
-    background-repeat: repeat;
-    background-size: contain;
+  #pagination button.disabled {
+    opacity: 0.5;
+    cursor: default;
   }
-  .overlay-butterflies {
-    background-image: url('https://i.postimg.cc/tRfbYxqN/butterflies.png');
+  #pagination button.active {
+    background: var(--highlight-color);
+    color: #000;
   }
-  .overlay-hearts {
-    background-image: url('https://i.postimg.cc/PxRpyvKt/hearts.png');
+
+  /* ==== CART ==== */
+  #cart-area {
+    display: none;
   }
-  .overlay-spirals {
-    background-image: url('https://i.postimg.cc/kMDhDH7p/spirals.png');
+  #cart-items {
+    margin-top: 1rem;
   }
-  /* Dark mode toggle */
-  #dark-mode-toggle {
-    position: fixed;
-    bottom: 15px;
-    right: 15px;
-    background: var(--btn-bg);
-    border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    font-size: 24px;
-    color: var(--btn-text);
+  .cart-item {
+    background: var(--card-bg);
+    padding: 0.6rem;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.6rem;
+  }
+  .cart-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    border-radius: 4px;
+  }
+  .cart-item-info {
+    flex: 1;
+    margin-left: 1rem;
+  }
+  .cart-item-info p {
+    margin: 0.1rem 0;
+  }
+  .cart-item-qty {
+    display: flex;
+    align-items: center;
+  }
+  .cart-item-qty button {
+    padding: 0.2rem 0.5rem;
+    background: var(--button-bg);
+    border: none;
+    color: var(--button-text);
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 4px;
+    margin: 0 0.2rem;
+  }
+  .cart-item-qty input {
+    width: 40px;
+    text-align: center;
+    border: 1px solid var(--input-border);
+    border-radius: 4px;
+    padding: 0.15rem 0;
+    background: var(--input-bg);
+    color: var(--text-color);
+  }
+  #cart-summary {
+    margin-top: 1rem;
+    font-weight: 700;
+  }
+  #checkout-btn {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    width: 100%;
+    background: var(--highlight-color);
     border: none;
     cursor: pointer;
-    box-shadow: 0 0 5px #0003;
+    font-weight: 700;
+    color: #000;
+    border-radius: 5px;
+  }
+
+  /* ==== CHECKOUT ==== */
+  #checkout-area {
+    display: none;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+  }
+  #checkout-area h2 {
+    margin-top: 0;
+  }
+  #checkout-form label {
+    display: block;
+    margin: 0.5rem 0 0.2rem;
+  }
+  #checkout-form input[type=text],
+  #checkout-form input[type=email],
+  #checkout-form input[type=tel],
+  #checkout-form select,
+  #checkout-form textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid var(--input-border);
+    background: var(--input-bg);
+    color: var(--text-color);
+  }
+  #checkout-form textarea {
+    height: 60px;
+  }
+  #shipping-message {
+    margin-top: 0.5rem;
+    font-style: italic;
+    color: var(--secondary-color);
+  }
+  #place-order-btn {
+    margin-top: 1rem;
+    padding: 0.8rem;
+    width: 100%;
+    background: var(--highlight-color);
+    border: none;
+    cursor: pointer;
+    font-weight: 700;
+    color: #000;
+    border-radius: 5px;
+  }
+  #bank-details {
+    margin-top: 1rem;
+    font-weight: 700;
+    background: var(--card-bg);
+    padding: 1rem;
+    border-radius: 6px;
+    text-align: center;
+  }
+
+  /* ==== WHATSAPP BUTTON ==== */
+  #whatsapp-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #25d366;
+    border-radius: 50%;
+    width: 52px;
+    height: 52px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 8px #25d366aa;
+    cursor: pointer;
     z-index: 1000;
+  }
+  #whatsapp-button svg {
+    width: 28px;
+    height: 28px;
+    fill: white;
+  }
+
+  /* ==== MISC ==== */
+  button:disabled,
+  button.disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  /* ==== ALERT ==== */
+  #alert-box {
+    position: fixed;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--highlight-color);
+    color: #000;
+    padding: 0.7rem 1.2rem;
+    border-radius: 6px;
+    box-shadow: 0 0 8px var(--highlight-color);
+    display: none;
+    z-index: 1100;
   }
 </style>
 </head>
 <body>
+<header>
+  <h1 id="store-name">My Store</h1>
+  <button id="dark-mode-toggle" aria-label="Toggle Dark Mode">🌙</button>
+</header>
 
-<!-- DARK MODE TOGGLE -->
-<button id="dark-mode-toggle" title="Toggle Dark Mode">🌓</button>
+<main>
 
-<!-- LOGIN SCREEN -->
-<section id="login-screen">
-  <h2>Admin Login / Setup</h2>
-  <form id="login-form">
-    <label for="login-email">Email:</label>
-    <input type="email" id="login-email" required />
-    <label for="login-password">Password:</label>
-    <input type="password" id="login-password" required />
-    <button type="submit">Login</button>
-  </form>
-</section>
+  <!-- LOGIN SECTION -->
+  <section id="login-section">
+    <h2>Admin Login</h2>
+    <p id="login-instruction">No admin exists. Create your admin account below:</p>
+    <form id="login-form">
+      <label for="login-email">Email</label>
+      <input type="email" id="login-email" required autocomplete="username" />
+      <label for="login-password">Password</label>
+      <input type="password" id="login-password" required autocomplete="current-password" />
+      <button type="submit" id="login-btn">Login / Create Admin</button>
+    </form>
+  </section>
 
-<!-- ADMIN PANEL -->
-<section id="admin-panel" class="hidden">
-  <h2>Admin Dashboard</h2>
-  <button id="logout-btn" style="float:right; margin-top:-3rem; margin-bottom:1rem; display:none;">Logout</button>
+  <!-- ADMIN PANEL -->
+  <section id="admin-panel" aria-label="Admin Dashboard">
+    <h2>Admin Dashboard</h2>
 
-  <h3>Store Customization</h3>
-  <form id="customization-form">
-    <div>
-      <label for="store-name-input">Store Name:</label>
-      <input type="text" id="store-name-input" placeholder="My Store" />
+    <div id="admin-tabs" role="tablist" aria-label="Admin sections">
+      <button role="tab" id="tab-products" aria-selected="true">Products</button>
+      <button role="tab" id="tab-customization" aria-selected="false">Store Design & Settings</button>
+      <button role="tab" id="tab-orders" aria-selected="false">Orders</button>
+      <button role="tab" id="admin-logout-btn" style="margin-left:auto; background:#dc3545;">Logout</button>
     </div>
-    <div>
-      <label for="whatsapp-input">WhatsApp Number (digits only, e.g. 2348012345678):</label>
-      <input type="text" id="whatsapp-input" placeholder="2348012345678" />
+
+    <!-- Products Admin -->
+    <div class="admin-section active" id="products-section" role="tabpanel" aria-labelledby="tab-products">
+      <form id="product-form" aria-label="Add or edit product">
+        <input type="hidden" id="edit-product-id" />
+        <label for="product-name">Product Name</label>
+        <input type="text" id="product-name" placeholder="Product name" required />
+
+        <label for="product-price">Price (₦)</label>
+        <input type="number" id="product-price" placeholder="Price in Naira" min="0" step="100" required />
+
+        <label for="product-description">Description</label>
+        <textarea id="product-description" placeholder="Description"></textarea>
+
+        <label for="product-colors">Colors (one per line)</label>
+        <textarea id="product-colors" placeholder="Enter each color on its own line"></textarea>
+
+        <label for="product-sizes">Sizes (one per line)</label>
+        <textarea id="product-sizes" placeholder="Enter each size on its own line"></textarea>
+
+        <label for="product-stock">Stock Quantity</label>
+        <input type="number" id="product-stock" min="0" step="1" value="0" required />
+
+        <label for="product-image">Image URL (or base64 string)</label>
+        <input type="text" id="product-image" placeholder="Image URL or base64 string" />
+
+        <button type="submit" id="save-product-btn">Add Product</button>
+        <button type="button" id="cancel-edit-btn" style="display:none; margin-left:10px;">Cancel Edit</button>
+      </form>
+
+      <div id="product-list" aria-live="polite" aria-atomic="true" aria-relevant="all" style="margin-top: 1rem;">
+        <!-- Product items go here -->
+      </div>
     </div>
-    <div>
-      <label for="stockpiling-select">Allow Stockpiling (selling more than stock):</label>
-      <select id="stockpiling-select">
-        <option value="true">Yes</option>
-        <option value="false">No</option>
+
+    <!-- Store Customization -->
+    <div class="admin-section" id="customization-section" role="tabpanel" aria-labelledby="tab-customization">
+      <h3>Store Design & Settings</h3>
+      <form id="store-customization">
+        <label for="store-name-input">Store Name</label>
+        <input type="text" id="store-name-input" placeholder="My Store" />
+
+        <label for="whatsapp-number-input">WhatsApp Number (with country code, e.g. +2348012345678)</label>
+        <input type="text" id="whatsapp-number-input" placeholder="+2348012345678" />
+
+        <label for="background-pattern-select">Background Pattern</label>
+        <select id="background-pattern-select">
+          <option value="">None</option>
+          <option value="butterfly">Butterflies</option>
+          <option value="spiral">Spirals</option>
+          <option value="hearts">Hearts</option>
+        </select>
+
+        <label for="primary-color-input">Primary Color (Buttons, links)</label>
+        <input type="color" id="primary-color-input" value="#007bff" />
+
+        <label for="highlight-color-input">Highlight Color (e.g. cart buttons)</label>
+        <input type="color" id="highlight-color-input" value="#28a745" />
+
+        <label for="font-select">Font Family</label>
+        <select id="font-select">
+          <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" selected>Segoe UI</option>
+          <option value="Arial, Helvetica, sans-serif">Arial</option>
+          <option value="'Courier New', Courier, monospace">Courier New</option>
+          <option value="'Georgia', serif">Georgia</option>
+          <option value="'Times New Roman', Times, serif">Times New Roman</option>
+          <option value="'Trebuchet MS', sans-serif">Trebuchet MS</option>
+        </select>
+
+        <button type="submit" id="save-customization-btn">Save Settings</button>
+      </form>
+    </div>
+
+    <!-- Orders Section -->
+    <div class="admin-section" id="orders-section" role="tabpanel" aria-labelledby="tab-orders">
+      <h3>Orders</h3>
+      <div id="orders-list" aria-live="polite" aria-atomic="true" aria-relevant="all">
+        <!-- Orders will be listed here -->
+      </div>
+    </div>
+  </section>
+
+  <!-- CUSTOMER SHOPPING AREA -->
+  <section id="shopping-area" aria-label="Shopping area" style="display:none;">
+    <h2>Products</h2>
+    <div id="collections-filter" style="margin-bottom:1rem;">
+      <label for="collection-select">Browse Collections:</label>
+      <select id="collection-select">
+        <option value="all">All</option>
       </select>
     </div>
-    <div>
-      <label for="delivery-fees-input">Delivery Fees (JSON format):</label>
-      <textarea id="delivery-fees-input" rows="5" placeholder='{"Lagos Mainland": 500, "Lagos Island": 700, "Others": 1000}'></textarea>
+    <div id="products-grid" aria-live="polite" aria-atomic="true" aria-relevant="all">
+      <!-- Products grid here -->
     </div>
-    <hr />
-    <h4>Store Design Customization</h4>
-    <div>
-      <label for="bg-pattern-select">Background Pattern:</label>
-      <select id="bg-pattern-select">
-        <option value="">None</option>
-        <option value="butterflies">Butterflies</option>
-        <option value="hearts">Hearts</option>
-        <option value="spirals">Spirals</option>
+    <div id="pagination" role="navigation" aria-label="Product pagination">
+      <!-- Pagination buttons -->
+    </div>
+    <button id="view-cart-btn" style="margin-top: 1rem;">View Cart (<span id="cart-count">0</span>)</button>
+  </section>
+
+  <!-- CART AREA -->
+  <section id="cart-area" aria-label="Shopping cart" style="display:none;">
+    <h2>Your Cart</h2>
+    <div id="cart-items" aria-live="polite" aria-atomic="true" aria-relevant="all">
+      <!-- Cart items -->
+    </div>
+    <div id="cart-summary">
+      <p>Subtotal: ₦<span id="cart-subtotal">0</span></p>
+      <p>Delivery Fee: ₦<span id="cart-shipping-fee">0</span></p>
+      <p><strong>Total: ₦<span id="cart-total">0</span></strong></p>
+    </div>
+    <button id="checkout-btn">Proceed to Checkout</button>
+    <button id="continue-shopping-btn" style="margin-left: 10px;">Continue Shopping</button>
+  </section>
+
+  <!-- CHECKOUT AREA -->
+  <section id="checkout-area" aria-label="Checkout" style="display:none;">
+    <h2>Checkout</h2>
+    <form id="checkout-form">
+      <label for="checkout-name">Full Name</label>
+      <input type="text" id="checkout-name" required />
+
+      <label for="checkout-email">Email</label>
+      <input type="email" id="checkout-email" required />
+
+      <label for="checkout-phone">Phone Number</label>
+      <input type="tel" id="checkout-phone" required />
+
+      <label for="checkout-address">Delivery Address</label>
+      <textarea id="checkout-address" required></textarea>
+
+      <label for="delivery-area-select">Delivery Area</label>
+      <select id="delivery-area-select" required>
+        <option value="">Select your delivery area</option>
+        <option value="Lagos Mainland">Lagos Mainland (₦500)</option>
+        <option value="Lagos Island">Lagos Island (₦700)</option>
+        <option value="Outside Lagos">Outside Lagos (₦1000)</option>
+        <option value="Others">Others (Contact on WhatsApp)</option>
       </select>
+      <div id="shipping-message"></div>
+
+      <button type="submit" id="place-order-btn">Place Order</button>
+    </form>
+
+    <div id="bank-details">
+      <p>Transfer payment to:</p>
+      <p><strong id="bank-details-text">Demo Bank — 0000000000</strong></p>
+      <p>After payment, click the “I’ve Paid” button in your order confirmation email.</p>
     </div>
-    <div>
-      <label for="bg-image-input">Or Upload Background Image URL:</label>
-      <input type="text" id="bg-image-input" placeholder="Paste image URL here" />
-    </div>
-    <div>
-      <label>Toggle Decorative Overlays:</label>
-      <label class="overlay-option"><input type="checkbox" id="overlay-butterflies" /> Butterflies</label>
-      <label class="overlay-option"><input type="checkbox" id="overlay-hearts" /> Hearts</label>
-      <label class="overlay-option"><input type="checkbox" id="overlay-spirals" /> Spirals</label>
-    </div>
-    <div>
-      <label for="btn-color-input">Button Color:</label>
-      <input type="color" id="btn-color-input" />
-    </div>
-    <div>
-      <label for="text-color-input">Text Color:</label>
-      <input type="color" id="text-color-input" />
-    </div>
-    <div>
-      <label for="highlight-color-input">Highlight Color:</label>
-      <input type="color" id="highlight-color-input" />
-    </div>
-    <div>
-      <label for="font-select">Font Family:</label>
-      <select id="font-select">
-        <option value="Arial, sans-serif">Arial (default)</option>
-        <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
-        <option value="'Courier New', Courier, monospace">Courier New</option>
-        <option value="'Georgia', serif">Georgia</option>
-        <option value="'Times New Roman', Times, serif">Times New Roman</option>
-        <option value="'Comic Sans MS', cursive, sans-serif">Comic Sans MS</option>
-      </select>
-    </div>
+    <button id="back-to-cart-btn" style="margin-top:1rem;">Back to Cart</button>
+  </section>
 
-    <button type="submit">Save Customization</button>
-  </form>
+</main>
 
-  <hr />
-  <h3>Manage Products</h3>
-  <form id="product-form">
-    <input type="hidden" id="product-id" />
-    <label for="product-name">Name:</label>
-    <input type="text" id="product-name" required />
-    <label for="product-price">Price (₦):</label>
-    <input type="number" id="product-price" min="0" required />
-    <label for="product-desc">Description:</label>
-    <textarea id="product-desc"></textarea>
-    <label for="product-stock">Stock Quantity (leave empty for unlimited):</label>
-    <input type="number" id="product-stock" min="0" />
-    <label for="product-colors">Colors (one per line):</label>
-    <textarea id="product-colors" rows="3" placeholder="Red\nBlue\nGreen"></textarea>
-    <label for="product-sizes">Sizes (one per line):</label>
-    <textarea id="product-sizes" rows="3" placeholder="S\nM\nL\nXL"></textarea>
-    <label for="product-image">Image URL:</label>
-    <input type="text" id="product-image" placeholder="https://example.com/image.jpg" required />
-    <button type="submit">Save Product</button>
-  </form>
+<!-- WHATSAPP BUTTON -->
+<div id="whatsapp-button" title="Contact us on WhatsApp" role="button" tabindex="0" aria-label="WhatsApp Contact">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M20.52 3.48a11.93 11.93 0 0 0-16.91 0 11.84 11.84 0 0 0-3.44 8.42 11.6 11.6 0 0 0 2.01 6.48L1 23l5.68-1.51a11.65 11.65 0 0 0 6.39 1.9c6.62 0 12-5.38 12-12a11.83 11.83 0 0 0-3.55-8.4zm-8.6 15.04a7.12 7.12 0 0 1-3.63-1.01l-.26-.16-3.37.9.9-3.28-.17-.28a7.18 7.18 0 0 1 1-6.21 6.97 6.97 0 0 1 12.01 4.32 6.81 6.81 0 0 1-1.99 4.9 6.61 6.61 0 0 1-4.06 1.44zm3.82-5.45c-.21-.1-1.24-.61-1.43-.68-.19-.07-.33-.1-.48.1s-.55.67-.68.8-.25.15-.46.05a5.15 5.15 0 0 1-1.5-.88 5.81 5.81 0 0 1-1.08-1.34c-.11-.19-.01-.29.08-.39.08-.08.19-.21.29-.31a.64.64 0 0 0 .1-.2c0-.06 0-.12-.02-.17-.05-.09-.45-1.08-.62-1.47s-.34-.33-.48-.34a.54.54 0 0 0-.38 0c-.13 0-.28.1-.43.29-.15.18-.59.58-.59 1.42s.61 1.65.69 1.77c.08.12 1.18 1.8 2.86 2.52a10.11 10.11 0 0 0 1.66.68c.7.22 1.34.19 1.85.12.57-.08 1.74-.71 1.99-1.4.25-.7.25-1.3.18-1.4-.07-.1-.19-.15-.4-.25z"/>
+  </svg>
+</div>
 
-  <div id="admin-products-list" style="margin-top:1rem;"></div>
-
-  <button id="back-to-shop-btn" style="margin-top:1rem;">Back to Storefront</button>
-</section>
-
-<!-- SHOPPING AREA -->
-<section id="shopping-area" class="hidden">
-  <h1 class="store-name">My Store</h1>
-  <div id="products-grid"></div>
-  <div id="pagination"></div>
-
-  <h2>Cart</h2>
-  <div class="cart-area">
-    <div id="cart-items"></div>
-    <div><strong>Subtotal:</strong> <span id="cart-subtotal">₦0</span></div>
-    <button id="proceed-to-checkout">Proceed to Checkout</button>
-  </div>
-</section>
-
-<!-- CHECKOUT -->
-<section id="checkout" class="hidden">
-  <h2>Checkout</h2>
-  <form id="checkout-form">
-    <label for="checkout-name">Full Name:</label>
-    <input type="text" id="checkout-name" required />
-    <label for="checkout-email">Email:</label>
-    <input type="email" id="checkout-email" required />
-    <label for="checkout-phone">Phone Number:</label>
-    <input type="text" id="checkout-phone" required />
-    <label for="checkout-address">Delivery Address:</label>
-    <textarea id="checkout-address" required></textarea>
-    <label for="delivery-area">Delivery Area:</label>
-    <select id="delivery-area" required></select>
-    <div id="delivery-area-msg" style="color:#c00; margin-bottom:1rem; display:none;"></div>
-
-    <div><strong>Shipping Fee:</strong> <span id="checkout-shipping">₦0</span></div>
-    <div><strong>Total:</strong> <span id="checkout-total">₦0</span></div>
-
-    <div id="stockpiling-msg" style="color:#c00; margin-bottom:1rem; display:none;"></div>
-
-    <button type="submit">Place Order</button>
-  </form>
-</section>
-
-<!-- Decorative overlays -->
-<div id="overlay-butterflies" class="overlay-butterflies hidden"></div>
-<div id="overlay-hearts" class="overlay-hearts hidden"></div>
-<div id="overlay-spirals" class="overlay-spirals hidden"></div>
+<!-- ALERT BOX -->
+<div id="alert-box" role="alert"></div>
 
 <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
 <script>
-  emailjs.init('RN5H1CcY7Fqkakg5w'); // Your public key
+  (function() {
+    emailjs.init("RN5H1CcY7Fqkakg5w"); // YOUR PUBLIC KEY here
 
-  // State & keys
-  const STORAGE_KEYS = {
-    PRODUCTS: 'store_products',
-    CART: 'store_cart',
-    ORDERS: 'store_orders',
-    ADMIN: 'store_admin',
-    CUSTOMIZATION: 'store_customization',
-  };
+    // ---- STORAGE KEYS ----
+    const ADMIN_KEY = 'my_store_admin';
+    const PRODUCTS_KEY = 'my_store_products';
+    const ORDERS_KEY = 'my_store_orders';
+    const SETTINGS_KEY = 'my_store_settings';
+    const CART_KEY = 'my_store_cart';
 
-  let state = {
-    products: [],
-    cart: [],
-    orders: [],
-    currentUser: null,
-    adminCredentials: null,
-    customization: {
-      storeName: 'My Store',
-      whatsapp: '2348012345678',
-      allowStockpiling: false,
-      deliveryFees: {
-        "Lagos Mainland": 500,
-        "Lagos Island": 700,
-        "Others": 1000
-      },
-      bgPattern: '',
-      bgImage: '',
-      overlays: {
-        butterflies: false,
-        hearts: false,
-        spirals: false,
-      },
-      btnColor: '#007bff',
-      textColor: '#111',
-      highlightColor: '#ffc107',
-      fontFamily: 'Arial, sans-serif',
-    },
-  };
+    // ---- STATE ----
+    let currentUser = null; // admin object {email, password} when logged in
+    let products = [];
+    let orders = [];
+    let settings = {};
+    let cart = [];
+    let editingProductId = null;
+    let currentPage = 1;
+    const PRODUCTS_PER_PAGE = 6;
 
-  // Helpers
-  function saveData(key, data) {
-    localStorage.setItem(key, JSON.stringify(data));
-  }
-  function loadData(key, fallback) {
-    const d = localStorage.getItem(key);
-    if(!d) return fallback;
-    try {
-      return JSON.parse(d);
-    } catch {
-      return fallback;
+    // DOM ELEMENTS
+    const loginSection = document.getElementById('login-section');
+    const loginForm = document.getElementById('login-form');
+    const loginEmailInput = document.getElementById('login-email');
+    const loginPasswordInput = document.getElementById('login-password');
+    const loginInstruction = document.getElementById('login-instruction');
+    const adminPanel = document.getElementById('admin-panel');
+    const adminTabs = document.getElementById('admin-tabs');
+    const productsSection = document.getElementById('products-section');
+    const customizationSection = document.getElementById('customization-section');
+    const ordersSection = document.getElementById('orders-section');
+    const storeNameHeader = document.getElementById('store-name');
+    const productForm = document.getElementById('product-form');
+    const productNameInput = document.getElementById('product-name');
+    const productPriceInput = document.getElementById('product-price');
+    const productDescriptionInput = document.getElementById('product-description');
+    const productColorsInput = document.getElementById('product-colors');
+    const productSizesInput = document.getElementById('product-sizes');
+    const productStockInput = document.getElementById('product-stock');
+    const productImageInput = document.getElementById('product-image');
+    const saveProductBtn = document.getElementById('save-product-btn');
+    const cancelEditBtn = document.getElementById('cancel-edit-btn');
+    const productListDiv = document.getElementById('product-list');
+    const storeCustomizationForm = document.getElementById('store-customization');
+    const storeNameInput = document.getElementById('store-name-input');
+    const whatsappNumberInput = document.getElementById('whatsapp-number-input');
+    const backgroundPatternSelect = document.getElementById('background-pattern-select');
+    const primaryColorInput = document.getElementById('primary-color-input');
+    const highlightColorInput = document.getElementById('highlight-color-input');
+    const fontSelect = document.getElementById('font-select');
+    const ordersListDiv = document.getElementById('orders-list');
+    const adminLogoutBtn = document.getElementById('admin-logout-btn');
+
+    const shoppingArea = document.getElementById('shopping-area');
+    const collectionSelect = document.getElementById('collection-select');
+    const productsGrid = document.getElementById('products-grid');
+    const paginationDiv = document.getElementById('pagination');
+    const viewCartBtn = document.getElementById('view-cart-btn');
+
+    const cartArea = document.getElementById('cart-area');
+    const cartItemsDiv = document.getElementById('cart-items');
+    const cartSubtotalSpan = document.getElementById('cart-subtotal');
+    const cartShippingFeeSpan = document.getElementById('cart-shipping-fee');
+    const cartTotalSpan = document.getElementById('cart-total');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const continueShoppingBtn = document.getElementById('continue-shopping-btn');
+
+    const checkoutArea = document.getElementById('checkout-area');
+    const checkoutForm = document.getElementById('checkout-form');
+    const checkoutNameInput = document.getElementById('checkout-name');
+    const checkoutEmailInput = document.getElementById('checkout-email');
+    const checkoutPhoneInput = document.getElementById('checkout-phone');
+    const checkoutAddressInput = document.getElementById('checkout-address');
+    const deliveryAreaSelect = document.getElementById('delivery-area-select');
+    const shippingMessageDiv = document.getElementById('shipping-message');
+    const placeOrderBtn = document.getElementById('place-order-btn');
+    const bankDetailsText = document.getElementById('bank-details-text');
+    const backToCartBtn = document.getElementById('back-to-cart-btn');
+
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    const whatsappButton = document.getElementById('whatsapp-button');
+
+    const alertBox = document.getElementById('alert-box');
+
+    // ===== HELPERS =====
+
+    function showAlert(message, duration = 3000) {
+      alertBox.textContent = message;
+      alertBox.style.display = 'block';
+      setTimeout(() => {
+        alertBox.style.display = 'none';
+      }, duration);
     }
-  }
-  function formatCurrency(num) {
-    return '₦' + num.toLocaleString();
-  }
-  function showSection(id) {
-    document.querySelectorAll('section').forEach(s => {
-      s.classList.add('hidden');
-    });
-    document.getElementById(id).classList.remove('hidden');
-  }
 
-  // Init/load
-  function initData() {
-    state.products = loadData(STORAGE_KEYS.PRODUCTS, []);
-    state.cart = loadData(STORAGE_KEYS.CART, []);
-    state.orders = loadData(STORAGE_KEYS.ORDERS, []);
-    state.adminCredentials = loadData(STORAGE_KEYS.ADMIN, null);
-    state.customization = loadData(STORAGE_KEYS.CUSTOMIZATION, state.customization);
-  }
-
-  // Apply store customization styles dynamically
-  function applyCustomization() {
-    document.querySelectorAll('.store-name').forEach(el => el.textContent = state.customization.storeName || 'My Store');
-
-    // Background pattern or image
-    if(state.customization.bgImage) {
-      document.body.style.backgroundImage = `url(${state.customization.bgImage})`;
-      document.body.style.backgroundRepeat = 'no-repeat';
-      document.body.style.backgroundSize = 'cover';
-      document.body.style.backgroundPosition = 'center';
-    } else if(state.customization.bgPattern) {
-      document.body.style.backgroundImage = `url(${{
-        butterflies: 'https://i.postimg.cc/tRfbYxqN/butterflies.png',
-        hearts: 'https://i.postimg.cc/PxRpyvKt/hearts.png',
-        spirals: 'https://i.postimg.cc/kMDhDH7p/spirals.png'
-      }[state.customization.bgPattern]})`;
-      document.body.style.backgroundRepeat = 'repeat';
-      document.body.style.backgroundSize = 'contain';
-      document.body.style.backgroundPosition = '';
-    } else {
-      document.body.style.backgroundImage = 'none';
+    function saveAdmin(user) {
+      localStorage.setItem(ADMIN_KEY, JSON.stringify(user));
+    }
+    function getAdmin() {
+      const adminStr = localStorage.getItem(ADMIN_KEY);
+      return adminStr ? JSON.parse(adminStr) : null;
     }
 
-    // Decorative overlays visibility
-    document.getElementById('overlay-butterflies').classList.toggle('hidden', !state.customization.overlays.butterflies);
-    document.getElementById('overlay-hearts').classList.toggle('hidden', !state.customization.overlays.hearts);
-    document.getElementById('overlay-spirals').classList.toggle('hidden', !state.customization.overlays.spirals);
-
-    // Colors and fonts
-    document.documentElement.style.setProperty('--btn-bg', state.customization.btnColor);
-    document.documentElement.style.setProperty('--text-color', state.customization.textColor);
-    document.documentElement.style.setProperty('--highlight-color', state.customization.highlightColor);
-    document.body.style.fontFamily = state.customization.fontFamily;
-  }
-
-  // Render product grid with pagination
-  const PRODUCTS_PER_PAGE = 6;
-  let currentPage = 1;
-
-  function renderProducts() {
-    const grid = document.getElementById('products-grid');
-    grid.innerHTML = '';
-    if(state.products.length === 0) {
-      grid.innerHTML = '<p>No products yet.</p>';
-      return;
+    function saveProducts() {
+      localStorage.setItem(PRODUCTS_KEY, JSON.stringify(products));
     }
-    const start = (currentPage - 1) * PRODUCTS_PER_PAGE;
-    const end = start + PRODUCTS_PER_PAGE;
-    const pagedProducts = state.products.slice(start, end);
-
-    pagedProducts.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'product-card';
-      let colors = p.colors || [];
-      let sizes = p.sizes || [];
-
-      card.innerHTML = `
-        <img src="${p.image}" alt="${p.name}" />
-        <div class="product-info">
-          <h3>${p.name}</h3>
-          <p>${p.description || ''}</p>
-          <p><strong>Price:</strong> ${formatCurrency(p.price)}</p>
-          <label for="color-select-${p.id}">Color:</label>
-          <select id="color-select-${p.id}">
-            ${colors.map(c => `<option value="${c}">${c}</option>`).join('')}
-          </select>
-          <label for="size-select-${p.id}">Size:</label>
-          <select id="size-select-${p.id}">
-            ${sizes.map(s => `<option value="${s}">${s}</option>`).join('')}
-          </select>
-          <label for="qty-input-${p.id}">Quantity:</label>
-          <input type="number" id="qty-input-${p.id}" min="1" value="1" style="width:60px" />
-          <button data-id="${p.id}" class="add-to-cart-btn">Add to Cart</button>
-        </div>
-      `;
-      grid.appendChild(card);
-    });
-
-    renderPagination();
-  }
-
-  function renderPagination() {
-    const pagination = document.getElementById('pagination');
-    pagination.innerHTML = '';
-    const totalPages = Math.ceil(state.products.length / PRODUCTS_PER_PAGE);
-    if(totalPages <= 1) return;
-
-    for(let i=1; i<=totalPages; i++) {
-      const btn = document.createElement('button');
-      btn.textContent = i;
-      if(i === currentPage) btn.disabled = true;
-      btn.addEventListener('click', () => {
-        currentPage = i;
-        renderProducts();
-      });
-      pagination.appendChild(btn);
+    function loadProducts() {
+      const prods = localStorage.getItem(PRODUCTS_KEY);
+      products = prods ? JSON.parse(prods) : [];
     }
-  }
 
-  // Cart functions
-  function renderCart() {
-    const cartItems = document.getElementById('cart-items');
-    cartItems.innerHTML = '';
-    if(state.cart.length === 0) {
-      cartItems.innerHTML = '<p>Cart is empty.</p>';
-      updateCartTotals();
-      return;
+    function saveOrders() {
+      localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
     }
-    state.cart.forEach((item, idx) => {
-      const product = state.products.find(p => p.id === item.productId);
-      if(!product) return;
-      const div = document.createElement('div');
-      div.innerHTML = `
-        <strong>${product.name}</strong> (${item.color}, ${item.size}) x ${item.quantity}
-        <button data-idx="${idx}" class="remove-cart-item" style="margin-left:10px;">Remove</button>
-      `;
-      cartItems.appendChild(div);
-    });
-    // Add event listeners for remove buttons
-    [...document.getElementsByClassName('remove-cart-item')].forEach(btn => {
-      btn.onclick = () => {
-        const idx = +btn.getAttribute('data-idx');
-        state.cart.splice(idx,1);
-        saveData(STORAGE_KEYS.CART, state.cart);
-        renderCart();
-      };
-    });
-    updateCartTotals();
-  }
-
-  function updateCartTotals() {
-    const subtotalEl = document.getElementById('cart-subtotal');
-    let subtotal = 0;
-    for(let item of state.cart) {
-      const product = state.products.find(p => p.id === item.productId);
-      if(product) subtotal += product.price * item.quantity;
+    function loadOrders() {
+      const ords = localStorage.getItem(ORDERS_KEY);
+      orders = ords ? JSON.parse(ords) : [];
     }
-    subtotalEl.textContent = formatCurrency(subtotal);
-  }
 
-  // Add to cart handler
-  function addToCart(productId, color, size, quantity) {
-    const product = state.products.find(p => p.id === productId);
-    if(!product) return alert('Product not found');
+    function saveSettings() {
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    }
+    function loadSettings() {
+      const sets = localStorage.getItem(SETTINGS_KEY);
+      if (sets) {
+        settings = JSON.parse(sets);
+      } else {
+        settings = {
+          storeName: "My Store",
+          whatsappNumber: "",
+          backgroundPattern: "",
+          primaryColor: "#007bff",
+          highlightColor: "#28a745",
+          fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+          bankDetails: "Demo Bank — 0000000000"
+        };
+        saveSettings();
+      }
+    }
 
-    quantity = parseInt(quantity);
-    if(isNaN(quantity) || quantity < 1) quantity = 1;
+    function saveCart() {
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    }
+    function loadCart() {
+      const crt = localStorage.getItem(CART_KEY);
+      cart = crt ? JSON.parse(crt) : [];
+    }
 
-    // Stock check
-    if(!state.customization.allowStockpiling && product.stock !== undefined && product.stock !== null) {
-      // Calculate total already in cart for this product/color/size
-      let totalInCart = 0;
-      for(let citem of state.cart) {
-        if(citem.productId === productId && citem.color === color && citem.size === size) {
-          totalInCart += citem.quantity;
+    function setCSSVariables() {
+      document.documentElement.style.setProperty('--primary-color', settings.primaryColor);
+      document.documentElement.style.setProperty('--highlight-color', settings.highlightColor);
+      document.documentElement.style.setProperty('--button-bg', settings.primaryColor);
+      document.documentElement.style.setProperty('--button-text', getContrastYIQ(settings.primaryColor));
+      document.documentElement.style.setProperty('--font-family', settings.fontFamily);
+      document.body.style.fontFamily = settings.fontFamily;
+
+      // Background pattern
+      if (settings.backgroundPattern) {
+        let bgUrl = "";
+        switch (settings.backgroundPattern) {
+          case "butterfly":
+            bgUrl = "https://i.ibb.co/YZ6H49s/butterfly.png";
+            break;
+          case "spiral":
+            bgUrl = "https://i.ibb.co/89P8bQq/spiral.png";
+            break;
+          case "hearts":
+            bgUrl = "https://i.ibb.co/2FpqLGb/hearts.png";
+            break;
+          default:
+            bgUrl = "";
         }
-      }
-      if(quantity + totalInCart > product.stock) {
-        alert(`Not enough stock. Available: ${product.stock - totalInCart}`);
-        return;
-      }
-    }
-
-    // Check if same product/color/size exists in cart
-    const existingIndex = state.cart.findIndex(c => c.productId === productId && c.color === color && c.size === size);
-    if(existingIndex >= 0) {
-      state.cart[existingIndex].quantity += quantity;
-    } else {
-      state.cart.push({productId, color, size, quantity});
-    }
-    saveData(STORAGE_KEYS.CART, state.cart);
-    renderCart();
-    alert('Added to cart');
-  }
-
-  // Delivery area and fee
-  function populateDeliveryAreas() {
-    const sel = document.getElementById('delivery-area');
-    sel.innerHTML = '';
-    for(let area in state.customization.deliveryFees) {
-      sel.appendChild(new Option(area, area));
-    }
-  }
-
-  function updateShippingAndTotal() {
-    const sel = document.getElementById('delivery-area');
-    const selected = sel.value;
-    const shipEl = document.getElementById('checkout-shipping');
-    const totalEl = document.getElementById('checkout-total');
-
-    let shippingFee = 0;
-    if(selected && state.customization.deliveryFees[selected] !== undefined) {
-      shippingFee = state.customization.deliveryFees[selected];
-      document.getElementById('delivery-area-msg').style.display = 'none';
-    } else if(selected === 'Others') {
-      // Show message to contact WhatsApp
-      document.getElementById('delivery-area-msg').textContent = 'If your delivery area is not listed, please contact us on WhatsApp after checkout.';
-      document.getElementById('delivery-area-msg').style.display = 'block';
-      shippingFee = 0;
-    } else {
-      shippingFee = 0;
-      document.getElementById('delivery-area-msg').style.display = 'none';
-    }
-
-    // Calculate subtotal from cart
-    let subtotal = 0;
-    for(let item of state.cart) {
-      const product = state.products.find(p => p.id === item.productId);
-      if(product) subtotal += product.price * item.quantity;
-    }
-
-    shipEl.textContent = formatCurrency(shippingFee);
-    totalEl.textContent = formatCurrency(subtotal + shippingFee);
-  }
-
-  // Admin login
-  const loginScreen = document.getElementById('login-screen');
-  const adminPanel = document.getElementById('admin-panel');
-  const shoppingArea = document.getElementById('shopping-area');
-  const checkoutSection = document.getElementById('checkout');
-  const logoutBtn = document.getElementById('logout-btn');
-
-  function showAdminPanel() {
-    loginScreen.classList.add('hidden');
-    adminPanel.classList.remove('hidden');
-    shoppingArea.classList.add('hidden');
-    checkoutSection.classList.add('hidden');
-    logoutBtn.style.display = 'inline-block';
-
-    loadAdminSettings();
-    renderProductsAdmin();
-    loadCustomizationForm();
-  }
-
-  function showShoppingArea() {
-    loginScreen.classList.add('hidden');
-    adminPanel.classList.add('hidden');
-    shoppingArea.classList.remove('hidden');
-    checkoutSection.classList.add('hidden');
-    logoutBtn.style.display = 'none';
-
-    renderProducts();
-    renderCart();
-    populateDeliveryAreas();
-    updateShippingAndTotal();
-    applyCustomization();
-  }
-
-  // Login logic: if no admin credentials saved, create on first login
-  document.getElementById('login-form').addEventListener('submit', e => {
-    e.preventDefault();
-    const email = e.target['login-email'].value.trim().toLowerCase();
-    const password = e.target['login-password'].value.trim();
-
-    if(!state.adminCredentials) {
-      // Create admin account first time
-      if(!email.includes('@')) return alert('Enter valid email');
-      if(password.length < 4) return alert('Password must be 4+ chars');
-      state.adminCredentials = {email, password};
-      saveData(STORAGE_KEYS.ADMIN, state.adminCredentials);
-      alert('Admin account created! Please login again.');
-      e.target.reset();
-      return;
-    }
-
-    // Validate login
-    if(email === state.adminCredentials.email && password === state.adminCredentials.password) {
-      state.currentUser = {email, role:'admin'};
-      showAdminPanel();
-    } else {
-      alert('Invalid credentials');
-    }
-  });
-
-  logoutBtn.addEventListener('click', () => {
-    state.currentUser = null;
-    showLoginScreen();
-  });
-
-  function showLoginScreen() {
-    loginScreen.classList.remove('hidden');
-    adminPanel.classList.add('hidden');
-    shoppingArea.classList.add('hidden');
-    checkoutSection.classList.add('hidden');
-    logoutBtn.style.display = 'none';
-  }
-
-  // Admin product management
-  const productForm = document.getElementById('product-form');
-  const adminProductsList = document.getElementById('admin-products-list');
-
-  function renderProductsAdmin() {
-    adminProductsList.innerHTML = '';
-    if(state.products.length === 0) {
-      adminProductsList.innerHTML = '<p>No products added yet.</p>';
-      return;
-    }
-    state.products.forEach(p => {
-      const div = document.createElement('div');
-      div.className = 'admin-product';
-      div.innerHTML = `
-        <img src="${p.image}" alt="${p.name}" />
-        <div>
-          <strong>${p.name}</strong><br />
-          ₦${p.price.toLocaleString()}<br />
-          Stock: ${p.stock === null || p.stock === undefined ? 'Unlimited' : p.stock}<br />
-          Colors: ${p.colors.join(', ')}<br />
-          Sizes: ${p.sizes.join(', ')}
-        </div>
-        <div>
-          <button class="admin-btn edit-btn" data-id="${p.id}">Edit</button>
-          <button class="admin-btn delete-btn" data-id="${p.id}">Delete</button>
-        </div>
-      `;
-      adminProductsList.appendChild(div);
-    });
-
-    // Attach edit/delete handlers
-    [...document.getElementsByClassName('edit-btn')].forEach(btn => {
-      btn.onclick = () => {
-        const id = btn.getAttribute('data-id');
-        const product = state.products.find(p => p.id === id);
-        if(!product) return;
-        productForm['product-id'].value = product.id;
-        productForm['product-name'].value = product.name;
-        productForm['product-price'].value = product.price;
-        productForm['product-desc'].value = product.description || '';
-        productForm['product-stock'].value = product.stock ?? '';
-        productForm['product-colors'].value = product.colors.join('\n');
-        productForm['product-sizes'].value = product.sizes.join('\n');
-        productForm['product-image'].value = product.image;
-      };
-    });
-    [...document.getElementsByClassName('delete-btn')].forEach(btn => {
-      btn.onclick = () => {
-        if(!confirm('Delete this product?')) return;
-        const id = btn.getAttribute('data-id');
-        state.products = state.products.filter(p => p.id !== id);
-        saveData(STORAGE_KEYS.PRODUCTS, state.products);
-        renderProductsAdmin();
-        renderProducts();
-      };
-    });
-  }
-
-  productForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const id = productForm['product-id'].value || Date.now().toString();
-    const name = productForm['product-name'].value.trim();
-    const price = parseFloat(productForm['product-price'].value);
-    const desc = productForm['product-desc'].value.trim();
-    const stockRaw = productForm['product-stock'].value.trim();
-    const stock = stockRaw === '' ? null : parseInt(stockRaw);
-    const colors = productForm['product-colors'].value.trim().split('\n').map(s => s.trim()).filter(Boolean);
-    const sizes = productForm['product-sizes'].value.trim().split('\n').map(s => s.trim()).filter(Boolean);
-    const image = productForm['product-image'].value.trim();
-
-    if(!name || isNaN(price) || !image) return alert('Name, price, and image URL are required.');
-
-    // Validate colors and sizes if needed
-
-    const existingIndex = state.products.findIndex(p => p.id === id);
-    const newProduct = {id, name, price, description: desc, stock, colors, sizes, image};
-
-    if(existingIndex >= 0) {
-      state.products[existingIndex] = newProduct;
-    } else {
-      state.products.push(newProduct);
-    }
-
-    saveData(STORAGE_KEYS.PRODUCTS, state.products);
-    renderProductsAdmin();
-    renderProducts();
-    productForm.reset();
-    productForm['product-id'].value = '';
-  });
-
-  // Customization form load and save
-  const customizationForm = document.getElementById('customization-form');
-
-  function loadCustomizationForm() {
-    customizationForm['store-name-input'].value = state.customization.storeName;
-    customizationForm['whatsapp-input'].value = state.customization.whatsapp;
-    customizationForm['stockpiling-select'].value = state.customization.allowStockpiling ? 'true' : 'false';
-    customizationForm['delivery-fees-input'].value = JSON.stringify(state.customization.deliveryFees, null, 2);
-    customizationForm['bg-pattern-select'].value = state.customization.bgPattern || '';
-    customizationForm['bg-image-input'].value = state.customization.bgImage || '';
-    customizationForm['overlay-butterflies'].checked = state.customization.overlays.butterflies;
-    customizationForm['overlay-hearts'].checked = state.customization.overlays.hearts;
-    customizationForm['overlay-spirals'].checked = state.customization.overlays.spirals;
-    customizationForm['btn-color-input'].value = state.customization.btnColor;
-    customizationForm['text-color-input'].value = state.customization.textColor;
-    customizationForm['highlight-color-input'].value = state.customization.highlightColor;
-    customizationForm['font-select'].value = state.customization.fontFamily;
-  }
-
-  customizationForm.addEventListener('submit', e => {
-    e.preventDefault();
-    const storeName = customizationForm['store-name-input'].value.trim() || 'My Store';
-    const whatsapp = customizationForm['whatsapp-input'].value.trim();
-    const allowStockpiling = customizationForm['stockpiling-select'].value === 'true';
-    let deliveryFees = {};
-    try {
-      deliveryFees = JSON.parse(customizationForm['delivery-fees-input'].value);
-    } catch {
-      alert('Invalid JSON format for delivery fees.');
-      return;
-    }
-    const bgPattern = customizationForm['bg-pattern-select'].value || '';
-    const bgImage = customizationForm['bg-image-input'].value.trim();
-    const overlays = {
-      butterflies: customizationForm['overlay-butterflies'].checked,
-      hearts: customizationForm['overlay-hearts'].checked,
-      spirals: customizationForm['overlay-spirals'].checked,
-    };
-    const btnColor = customizationForm['btn-color-input'].value;
-    const textColor = customizationForm['text-color-input'].value;
-    const highlightColor = customizationForm['highlight-color-input'].value;
-    const fontFamily = customizationForm['font-select'].value;
-
-    state.customization = {
-      storeName, whatsapp, allowStockpiling, deliveryFees,
-      bgPattern, bgImage, overlays,
-      btnColor, textColor, highlightColor,
-      fontFamily,
-    };
-    saveData(STORAGE_KEYS.CUSTOMIZATION, state.customization);
-    alert('Customization saved!');
-    applyCustomization();
-    populateDeliveryAreas();
-    updateShippingAndTotal();
-    document.querySelectorAll('.store-name').forEach(el => el.textContent = storeName);
-  });
-
-  // Add to cart event delegation
-  document.getElementById('products-grid').addEventListener('click', e => {
-    if(e.target.classList.contains('add-to-cart-btn')) {
-      const pid = e.target.getAttribute('data-id');
-      const color = document.getElementById('color-select-'+pid).value;
-      const size = document.getElementById('size-select-'+pid).value;
-      const qty = document.getElementById('qty-input-'+pid).value;
-      addToCart(pid, color, size, qty);
-    }
-  });
-
-  // Proceed to checkout button
-  document.getElementById('proceed-to-checkout').addEventListener('click', () => {
-    if(state.cart.length === 0) {
-      alert('Your cart is empty!');
-      return;
-    }
-    showSection('checkout');
-    populateDeliveryAreas();
-    updateShippingAndTotal();
-  });
-
-  // Checkout form submit
-  document.getElementById('checkout-form').addEventListener('submit', e => {
-    e.preventDefault();
-
-    // Validate stock if needed
-    if(!state.customization.allowStockpiling) {
-      for(let item of state.cart) {
-        const product = state.products.find(p => p.id === item.productId);
-        if(product && product.stock !== null && product.stock !== undefined) {
-          if(item.quantity > product.stock) {
-            alert(`Not enough stock for ${product.name}. Available: ${product.stock}`);
-            return;
-          }
+        if (bgUrl) {
+          document.body.style.backgroundImage = `url(${bgUrl})`;
+          document.body.style.backgroundRepeat = "repeat";
+          document.body.style.backgroundSize = "80px 80px";
+        } else {
+          document.body.style.backgroundImage = "";
         }
-      }
-    }
-
-    const name = e.target['checkout-name'].value.trim();
-    const email = e.target['checkout-email'].value.trim();
-    const phone = e.target['checkout-phone'].value.trim();
-    const address = e.target['checkout-address'].value.trim();
-    const deliveryArea = e.target['delivery-area'].value;
-
-    if(!name || !email || !phone || !address || !deliveryArea) {
-      alert('Please fill all required fields.');
-      return;
-    }
-
-    // Create order object
-    const order = {
-      id: Date.now().toString(),
-      items: [...state.cart],
-      customer: {name, email, phone, address, deliveryArea},
-      status: 'PENDING',
-      totalAmount: 0,
-      shippingFee: 0,
-      timestamp: new Date().toISOString()
-    };
-
-    // Calculate totals
-    let subtotal = 0;
-    for(let item of order.items) {
-      const product = state.products.find(p => p.id === item.productId);
-      if(product) subtotal += product.price * item.quantity;
-    }
-    order.shippingFee = state.customization.deliveryFees[deliveryArea] || 0;
-    order.totalAmount = subtotal + order.shippingFee;
-
-    // Save order
-    state.orders.push(order);
-    saveData(STORAGE_KEYS.ORDERS, state.orders);
-
-    // Decrement stock if applicable and if no stockpiling allowed
-    if(!state.customization.allowStockpiling) {
-      for(let item of order.items) {
-        let product = state.products.find(p => p.id === item.productId);
-        if(product && product.stock !== null && product.stock !== undefined) {
-          product.stock -= item.quantity;
-          if(product.stock < 0) product.stock = 0;
-        }
-      }
-      saveData(STORAGE_KEYS.PRODUCTS, state.products);
-      renderProductsAdmin();
-      renderProducts();
-    }
-
-    // Clear cart
-    state.cart = [];
-    saveData(STORAGE_KEYS.CART, state.cart);
-
-    // Send Emails via EmailJS
-    sendEmails(order);
-
-    alert('Order placed! You will receive an email confirmation.');
-    showShoppingArea();
-  });
-
-  // Send email function using EmailJS templates
-  function sendEmails(order) {
-    // Prepare variables for emailjs
-    const storeName = state.customization.storeName;
-    const whatsappLink = `https://wa.me/${state.customization.whatsapp}`;
-    const orderSummary = order.items.map(item => {
-      const p = state.products.find(pr => pr.id === item.productId);
-      return `${p.name} (${item.color}, ${item.size}) x${item.quantity} = ₦${(p.price*item.quantity).toLocaleString()}`;
-    }).join('\n');
-
-    // Customer email params
-    const customerParams = {
-      to_name: order.customer.name,
-      to_email: order.customer.email,
-      store_name: storeName,
-      order_id: order.id,
-      order_summary: orderSummary,
-      shipping_fee: formatCurrency(order.shippingFee),
-      total_amount: formatCurrency(order.totalAmount),
-      delivery_address: order.customer.address,
-      whatsapp_link: whatsappLink,
-      delivery_area: order.customer.deliveryArea,
-    };
-
-    // Admin email params
-    const adminParams = {
-      store_name: storeName,
-      order_id: order.id,
-      customer_name: order.customer.name,
-      customer_email: order.customer.email,
-      customer_phone: order.customer.phone,
-      delivery_address: order.customer.address,
-      delivery_area: order.customer.deliveryArea,
-      order_summary: orderSummary,
-      shipping_fee: formatCurrency(order.shippingFee),
-      total_amount: formatCurrency(order.totalAmount),
-      whatsapp_link: whatsappLink,
-    };
-
-    // Send customer email
-    emailjs.send('service_14fwkri', 'template_4zrsdni', customerParams)
-      .then(() => console.log('Customer email sent'))
-      .catch(e => console.error('Customer email error', e));
-
-    // Send admin email
-    emailjs.send('service_14fwkri', 'template_zc87bdl', adminParams)
-      .then(() => console.log('Admin email sent'))
-      .catch(e => console.error('Admin email error', e));
-  }
-
-  // Delivery area change listener to update fees dynamically
-  document.getElementById('delivery-area').addEventListener('change', updateShippingAndTotal);
-
-  // Back to store from admin panel
-  document.getElementById('back-to-shop-btn').addEventListener('click', () => {
-    showShoppingArea();
-  });
-
-  // Dark mode toggle
-  const darkToggleBtn = document.getElementById('dark-mode-toggle');
-  darkToggleBtn.addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-  });
-
-  // Init app
-  function init() {
-    initData();
-
-    if(state.adminCredentials && state.currentUser && state.currentUser.email === state.adminCredentials.email) {
-      showAdminPanel();
-    } else {
-      showShoppingArea();
-    }
-    applyCustomization();
-  }
-
-  init();
-
-</script>
-</body>
-</html>
+      } else {
+        document.body.style.backgroundImage =
