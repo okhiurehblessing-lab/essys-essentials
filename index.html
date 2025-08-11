@@ -3,1388 +3,827 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>My Naira Store</title>
+<title>My Store</title>
 <style>
-  :root {
-    --bg: #fff;
-    --text: #222;
-    --primary: #007bff;
-    --secondary: #6c757d;
-    --header-bg: var(--primary);
-    --header-text: #fff;
-    --border: #ddd;
-  }
-  [data-theme="dark"] {
-    --bg: #121212;
-    --text: #eee;
-    --primary: #9b59b6;
-    --secondary: #ccc;
-    --header-bg: #2d2d2d;
-    --header-text: #eee;
-    --border: #444;
-  }
+  /* Basic styling & dark mode toggle */
   body {
-    margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    transition: background 0.3s, color 0.3s;
-    display: flex; flex-direction: column;
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0; background: #f5f5f5; color: #222;
   }
-  header {
-    background: var(--header-bg);
-    color: var(--header-text);
-    padding: 1rem 1.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
+  body.dark {
+    background: #121212; color: #eee;
   }
-  header h1 {
-    margin: 0;
+  header, footer {
+    padding: 1rem; background: #333; color: white;
+  }
+  .store-name {
     font-size: 1.5rem;
-    display: flex; align-items: center;
-    gap: 0.5rem;
+    font-weight: bold;
   }
-  header img#storeLogo {
-    height: 40px;
-    max-width: 150px;
-    object-fit: contain;
-  }
-  header .actions {
-    display: flex;
-    gap: 0.7rem;
-    align-items: center;
-  }
-  button, input[type="button"] {
-    background: var(--primary);
-    border: none;
-    color: white;
-    padding: 0.4rem 0.9rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 1rem;
-    transition: background 0.25s;
-  }
-  button:hover, input[type="button"]:hover {
-    background: #0056b3;
-  }
-  a {
-    color: var(--primary);
+  #whatsapp-link {
+    color: #25D366;
+    margin-left: 1rem;
     text-decoration: none;
+    font-weight: bold;
   }
-  a:hover {
-    text-decoration: underline;
+  nav button {
+    margin-left: 1rem;
+    cursor: pointer;
   }
-  main {
-    flex-grow: 1;
-    max-width: 1100px;
-    margin: 1rem auto 3rem;
-    width: 90%;
-  }
-  .hidden {
-    display: none !important;
-  }
-  .dark-toggle {
-    background: transparent;
-    border: 1.5px solid var(--header-text);
-    color: var(--header-text);
-    font-weight: 600;
-    padding: 0.3rem 0.7rem;
-    border-radius: 5px;
-  }
-  .dark-toggle:hover {
-    background: var(--header-text);
-    color: var(--header-bg);
-  }
-  input, select, textarea {
-    font-size: 1rem;
-    padding: 0.5rem;
-    border: 1.5px solid var(--border);
-    border-radius: 5px;
-    width: 100%;
-    background: var(--bg);
-    color: var(--text);
-    margin-top: 0.3rem;
-    margin-bottom: 0.8rem;
-    box-sizing: border-box;
-  }
-  label {
-    font-weight: 600;
-    display: block;
-    margin-top: 1rem;
-  }
-  .form-group {
-    margin-bottom: 0.8rem;
-  }
-  /* Layout for 2-column product grid */
-  #shopProducts {
+  /* Sections hidden by default */
+  section { display: none; padding: 1rem; }
+  section.active { display: block; }
+
+  /* Product grid - 2 columns */
+  #product-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(260px,1fr));
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 1rem;
   }
   .product-card {
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: white;
     padding: 1rem;
     display: flex;
     flex-direction: column;
-    background: var(--bg);
-    transition: box-shadow 0.25s;
-  }
-  .product-card:hover {
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-  }
-  .product-card img {
-    max-width: 100%;
-    height: 180px;
-    object-fit: contain;
-    border-radius: 5px;
-    margin-bottom: 0.5rem;
-  }
-  .product-card h3 {
-    margin: 0 0 0.3rem;
-    font-size: 1.2rem;
-  }
-  .product-card .price {
-    font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 0.5rem;
-  }
-  .product-card .availability {
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-  }
-  .product-card .availability.instock {
-    color: green;
-  }
-  .product-card .availability.outstock {
-    color: red;
-  }
-  .product-card button {
-    margin-top: auto;
-  }
-  /* Pagination */
-  .pagination {
-    margin: 1rem 0;
-    text-align: center;
-  }
-  .pagination button {
-    margin: 0 0.25rem;
-    min-width: 35px;
-  }
-  /* Collections filter */
-  #collectionsFilter {
-    margin-bottom: 1rem;
-  }
-  #collectionsFilter select {
-    max-width: 250px;
-  }
-  /* Cart styles */
-  #cartSection {
-    max-width: 450px;
-    margin: 2rem auto;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    padding: 1rem;
-    background: var(--bg);
-  }
-  #cartItems {
-    margin-bottom: 1rem;
-  }
-  #cartItems .cart-item {
-    border-bottom: 1px solid var(--border);
-    padding: 0.4rem 0;
-    display: flex;
     justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
   }
-  #cartItems .cart-item:last-child {
-    border-bottom: none;
+  body.dark .product-card {
+    background: #222;
+    border-color: #444;
   }
-  #cartItems .cart-item-details {
-    flex-grow: 1;
-  }
-  #cartItems .cart-item-qty {
-    width: 50px;
-  }
-  #cartTotal {
-    font-weight: 700;
-    font-size: 1.2rem;
-    text-align: right;
-    margin-top: 0.8rem;
-  }
-  /* Forms inside admin */
-  #adminPanel {
-    max-width: 700px;
-    margin: 1rem auto 4rem;
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    padding: 1.2rem 1.5rem;
-  }
-  #adminPanel h2 {
-    margin-top: 0;
-  }
-  #adminPanel .product-list {
-    margin: 1rem 0 0;
-    max-height: 300px;
-    overflow-y: auto;
-    border-top: 1.5px solid var(--border);
-    padding-top: 1rem;
-  }
-  #adminPanel .product-list .admin-product {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 0.7rem;
-    align-items: center;
-  }
-  #adminPanel .product-list .admin-product img {
-    height: 50px;
-    width: 50px;
-    object-fit: contain;
-    border-radius: 5px;
-  }
-  #adminPanel .product-list .admin-product-details {
-    flex-grow: 1;
-  }
-  #adminPanel .product-list .admin-product-actions button {
-    margin-left: 0.5rem;
-    font-size: 0.9rem;
-  }
-  /* Admin login */
-  #adminLogin {
-    max-width: 350px;
-    margin: 3rem auto 1rem;
-    padding: 1.5rem 2rem;
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-  }
-  #adminLogin h2 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-  #adminLogin label {
-    font-weight: 600;
-  }
-  #adminLogin input {
-    margin-bottom: 1rem;
-  }
-  /* Customer login/sign-up */
-  #customerLogin {
-    max-width: 350px;
-    margin: 2rem auto 2rem;
-    padding: 1rem 1.2rem;
-    background: var(--bg);
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-  }
-  #customerLogin h3 {
-    margin-top: 0;
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-  #customerLogin label {
-    font-weight: 600;
-  }
-  #customerLogin input {
-    margin-bottom: 0.8rem;
-  }
-  #customerLogin button {
+  .product-image {
     width: 100%;
+    height: 160px;
+    object-fit: contain;
+    margin-bottom: 0.5rem;
   }
-  /* Checkout */
-  #checkoutSection {
-    max-width: 400px;
-    margin: 2rem auto 3rem;
-    padding: 1rem 1.2rem;
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    background: var(--bg);
+  .product-name {
+    font-weight: bold;
+    margin-bottom: 0.3rem;
   }
-  #checkoutSection h3 {
-    margin-top: 0;
-    margin-bottom: 1rem;
+  .product-price {
+    color: #007700;
+    margin-bottom: 0.5rem;
   }
-  /* Confirmation popup */
-  #confirmationPopup {
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.5);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
+  .product-stock {
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
   }
-  #confirmationPopup .popup-content {
-    background: var(--bg);
-    padding: 1.8rem 2rem;
-    border-radius: 12px;
-    max-width: 320px;
-    text-align: center;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+  .btn {
+    background: #0077cc;
+    border: none;
+    color: white;
+    padding: 0.5rem;
+    cursor: pointer;
+    border-radius: 3px;
   }
-  #confirmationPopup button {
+  .btn:disabled {
+    background: #999;
+    cursor: not-allowed;
+  }
+  /* Cart and checkout */
+  #cart-items {
     margin-top: 1rem;
   }
-  /* WhatsApp floating icon */
-  #whatsappIcon {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #25d366;
-    border-radius: 50%;
+  .cart-item {
+    border-bottom: 1px solid #ccc;
+    padding: 0.5rem 0;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .cart-item div {
+    flex: 1;
+  }
+  .cart-qty-input {
     width: 50px;
-    height: 50px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 0.2rem;
+  }
+  /* Checkout */
+  #checkout {
+    margin-top: 1rem;
+    border-top: 1px solid #ccc;
+    padding-top: 1rem;
+  }
+  label {
+    display: block;
+    margin: 0.5rem 0 0.2rem;
+  }
+  input, select, textarea {
+    width: 100%;
+    padding: 0.4rem;
+    box-sizing: border-box;
+  }
+  #delivery-area-msg, #stockpiling-msg {
+    margin-top: 0.5rem;
+  }
+  /* Admin styles */
+  #admin-panel input, #admin-panel textarea, #admin-panel select {
+    margin-bottom: 0.5rem;
+  }
+  #admin-panel label {
+    font-weight: bold;
+  }
+  #admin-products-list .admin-product {
+    border-bottom: 1px solid #ccc;
+    padding: 0.5rem 0;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  #admin-products-list img {
+    width: 50px; height: 50px; object-fit: contain; margin-right: 0.5rem;
+  }
+  .admin-btn {
+    background: #cc7700;
+    border: none;
+    color: white;
+    padding: 0.3rem 0.7rem;
     cursor: pointer;
-    z-index: 9999;
+    border-radius: 3px;
+    margin-left: 0.3rem;
   }
-  #whatsappIcon svg {
-    fill: white;
-    width: 28px;
-    height: 28px;
+  /* Pagination */
+  #pagination {
+    margin-top: 1rem;
+    text-align: center;
   }
-  /* Responsive tweaks */
-  @media (max-width: 600px) {
-    #shopProducts {
-      grid-template-columns: 1fr !important;
-    }
-    header {
-      flex-direction: column;
-      gap: 0.7rem;
-      align-items: flex-start;
-    }
+  #pagination button {
+    margin: 0 0.3rem;
   }
 </style>
 </head>
 <body>
 <header>
-  <h1><img id="storeLogo" src="" alt="Store Logo" class="hidden" /> <span id="storeNameTitle">My Naira Store</span></h1>
-  <div class="actions">
-    <button id="darkModeToggle" class="dark-toggle">🌙 Dark Mode</button>
-    <button id="cartBtn">Cart (<span id="cartCount">0</span>)</button>
-    <button id="logoutBtn" class="hidden">Logout Admin</button>
-  </div>
+  <span class="store-name">My Store</span>
+  <a id="whatsapp-link" href="#" target="_blank" title="Contact us on WhatsApp">WhatsApp</a>
+  <button id="dark-mode-toggle">Dark Mode</button>
+  <button id="logout-btn" style="display:none;">Logout</button>
 </header>
-<main>
-  <!-- Admin Login / Setup -->
-  <section id="adminLogin" class="hidden" aria-label="Admin Login Section">
-    <h2 id="adminLoginTitle">Admin Setup</h2>
-    <form id="adminLoginForm">
-      <label for="adminEmail">Admin Email</label>
-      <input type="email" id="adminEmail" required autocomplete="username" />
-      <label for="adminPassword">Password</label>
-      <input type="password" id="adminPassword" required autocomplete="current-password" />
-      <button type="submit" id="adminLoginSubmit">Create Admin Account</button>
-    </form>
-  </section>
 
-  <!-- Admin Dashboard -->
-  <section id="adminPanel" class="hidden" aria-label="Admin Dashboard">
-    <h2>Admin Dashboard</h2>
-    <button id="adminLogoutBtn">Logout</button>
-    <h3>Store Settings</h3>
-    <form id="storeSettingsForm">
-      <label for="storeNameInput">Store Name</label>
-      <input type="text" id="storeNameInput" />
-      <label for="storeLogoInput">Store Logo (PNG/JPG)</label>
-      <input type="file" id="storeLogoInput" accept="image/png, image/jpeg" />
-      <label for="bankDetailsInput">Bank Details</label>
-      <textarea id="bankDetailsInput" rows="2" placeholder="Bank name, account number, etc."></textarea>
-      <label for="whatsappLinkInput">WhatsApp Link (https://wa.me/number)</label>
-      <input type="url" id="whatsappLinkInput" placeholder="https://wa.me/234XXXXXXXXXX" />
-      <button type="submit">Save Store Settings</button>
-    </form>
-    <hr />
-    <h3>Manage Admin Account</h3>
-    <form id="adminAccountForm">
-      <label for="adminEmailChange">Change Admin Email</label>
-      <input type="email" id="adminEmailChange" />
-      <label for="adminPasswordChange">Change Admin Password</label>
-      <input type="password" id="adminPasswordChange" />
-      <button type="submit">Update Admin Account</button>
-    </form>
-    <hr />
-    <h3>Products</h3>
-    <form id="productForm">
-      <label for="productNameInput">Product Name</label>
-      <input type="text" id="productNameInput" required />
-      <label for="productPriceInput">Price (₦)</label>
-      <input type="number" id="productPriceInput" required min="0" step="100" />
-      <label for="productDescriptionInput">Description</label>
-      <textarea id="productDescriptionInput" rows="3"></textarea>
-      <label for="productAvailabilityInput">Availability</label>
-      <select id="productAvailabilityInput">
-        <option value="true" selected>In Stock</option>
-        <option value="false">Out of Stock</option>
-      </select>
-      <label for="productColorsInput">Colors (comma separated)</label>
-      <input type="text" id="productColorsInput" placeholder="e.g. Red, Blue, Green" />
-      <label for="productSizesInput">Sizes (comma separated)</label>
-      <input type="text" id="productSizesInput" placeholder="e.g. S, M, L, XL" />
-      <label for="productImageInput">Product Image (PNG/JPG)</label>
-      <input type="file" id="productImageInput" accept="image/png, image/jpeg" />
-      <button type="submit" id="addProductBtn">Add Product</button>
-    </form>
-    <div class="product-list" id="adminProductList"></div>
-    <hr />
-    <h3>Orders</h3>
-    <div id="ordersList"></div>
-  </section>
+<!-- LOGIN -->
+<section id="login-screen" class="active">
+  <h2>Admin Login</h2>
+  <form id="login-form">
+    <label>Email:</label>
+    <input type="email" id="login-email" required />
+    <label>Password:</label>
+    <input type="password" id="login-password" required />
+    <button type="submit" class="btn">Login</button>
+  </form>
+</section>
 
-  <!-- Shopping Area -->
-  <section id="shopArea" class="hidden" aria-label="Shopping Area">
-    <h2>Browse Collections</h2>
-    <div id="collectionsFilter">
-      <select id="collectionSelect">
-        <option value="all">All Collections</option>
-      </select>
-    </div>
-    <div id="shopProducts"></div>
-    <div class="pagination" id="paginationControls"></div>
-    <button id="customerLoginBtn">Login / Sign Up</button>
-  </section>
+<!-- ADMIN PANEL -->
+<section id="admin-panel">
+  <h2>Admin Dashboard</h2>
+  <button id="back-to-shop-btn">Back to Storefront</button>
 
-  <!-- Customer Login / Signup -->
-  <section id="customerLogin" class="hidden" aria-label="Customer Login Section">
-    <h3>Customer Account</h3>
-    <form id="customerLoginForm">
-      <label for="customerNameInput">Name</label>
-      <input type="text" id="customerNameInput" required />
-      <label for="customerEmailInput">Email</label>
-      <input type="email" id="customerEmailInput" required />
-      <label for="customerPhoneInput">Phone Number</label>
-      <input type="tel" id="customerPhoneInput" required />
-      <button type="submit" id="customerLoginSubmit">Continue to Cart</button>
-    </form>
-  </section>
+  <h3>Store Customization</h3>
+  <form id="customization-form">
+    <label>Store Name:</label>
+    <input type="text" id="store-name-input" />
+    <label>WhatsApp Number (include country code, e.g. 2348012345678):</label>
+    <input type="text" id="whatsapp-input" />
+    <label>Allow Stockpiling (customers can order more than stock):</label>
+    <select id="stockpiling-select">
+      <option value="true">Yes</option>
+      <option value="false">No</option>
+    </select>
+    <label>Delivery Fees (JSON format):</label>
+    <textarea id="delivery-fees-input" rows="6" style="font-family: monospace;"></textarea>
+    <button type="submit" class="btn">Save Customization</button>
+  </form>
 
-  <!-- Cart -->
-  <section id="cartSection" class="hidden" aria-label="Shopping Cart">
-    <h2>Your Cart</h2>
-    <div id="cartItems"></div>
-    <div id="cartTotal">Total: ₦0</div>
-    <button id="checkoutBtn">Proceed to Checkout</button>
-    <button id="backToShopBtn">Back to Shop</button>
-  </section>
+  <h3>Manage Products</h3>
+  <form id="product-form">
+    <input type="hidden" id="product-id" />
+    <label>Name:</label>
+    <input type="text" id="product-name" required />
+    <label>Price (₦):</label>
+    <input type="number" id="product-price" required min="0" />
+    <label>Description:</label>
+    <textarea id="product-desc"></textarea>
+    <label>Stock Quantity:</label>
+    <input type="number" id="product-stock" min="0" />
+    <label>Colors (comma separated):</label>
+    <input type="text" id="product-colors" placeholder="Red, Blue, Green" />
+    <label>Sizes (comma separated):</label>
+    <input type="text" id="product-sizes" placeholder="S, M, L, XL" />
+    <label>Image (paste base64 data URI):</label>
+    <textarea id="product-image" rows="3" placeholder="data:image/png;base64,..."></textarea>
+    <button type="submit" class="btn">Add / Update Product</button>
+  </form>
 
-  <!-- Checkout -->
-  <section id="checkoutSection" class="hidden" aria-label="Checkout Section">
+  <div id="admin-products-list"></div>
+</section>
+
+<!-- SHOPPING AREA -->
+<section id="shopping-area">
+  <h2 class="store-name"></h2>
+  <div id="product-list"></div>
+
+  <div id="pagination"></div>
+
+  <h3>Cart</h3>
+  <div id="cart-items"></div>
+  <button id="proceed-to-checkout" class="btn">Proceed to Checkout</button>
+
+  <section id="checkout" class="hidden">
     <h3>Checkout</h3>
-    <div id="checkoutBankDetails"></div>
-    <button id="confirmPaymentBtn">I’ve Paid</button>
-    <button id="cancelCheckoutBtn">Cancel</button>
+    <form id="checkout-form">
+      <label for="checkout-name">Name:</label>
+      <input id="checkout-name" type="text" required />
+      <label for="checkout-email">Email:</label>
+      <input id="checkout-email" type="email" required />
+      <label for="checkout-phone">Phone:</label>
+      <input id="checkout-phone" type="tel" required />
+      <label for="checkout-address">Delivery Address:</label>
+      <textarea id="checkout-address" required></textarea>
+      <label for="delivery-area">Select Delivery Area:</label>
+      <select id="delivery-area" required></select>
+      <div id="delivery-area-msg" style="color: #b36b00; margin-top: 5px; display: none;"></div>
+      <div id="stockpiling-msg" style="color: red; margin-top: 10px; display: none;"></div>
+      <div style="margin-top: 1rem;">
+        <div>Subtotal: <span id="checkout-subtotal">₦0</span></div>
+        <div>Delivery Fee: <span id="checkout-shipping-fee">₦0</span></div>
+        <div><strong>Total: <span id="checkout-total">₦0</span></strong></div>
+      </div>
+      <button type="submit" class="btn" style="margin-top:1rem;">Place Order</button>
+    </form>
   </section>
+</section>
 
-  <!-- Confirmation Popup -->
-  <div id="confirmationPopup" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle" aria-describedby="confirmationDesc">
-    <div class="popup-content">
-      <h3 id="confirmationTitle">Order Confirmed!</h3>
-      <p id="confirmationDesc">Thank you for your order. We will notify you once payment is confirmed.</p>
-      <button id="closeConfirmationBtn">Close</button>
-    </div>
-  </div>
-
-  <!-- WhatsApp Icon -->
-  <div id="whatsappIcon" title="Contact us on WhatsApp" class="hidden" role="button" tabindex="0" aria-label="WhatsApp contact link">
-    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.5 3.5a11.6 11.6 0 0 0-16.4 16.4l-2 5.5 5.5-2a11.6 11.6 0 0 0 13-19.9zm-7.1 14.8c-1.6 0-3.1-.9-4-2.3l-.3-.4-2.5 1 1-2.4-.3-.4a6.78 6.78 0 0 1 10-8.6 6.9 6.9 0 0 1-3.9 12.7zm3.2-5.3-.2-.4c-.1-.2-.2-.2-.3-.3-.1 0-.2 0-.4 0s-.3 0-.4.1l-.4.1-.3.1a3.24 3.24 0 0 1-1.2-1.2l-.2-.4-.4-.3c-.1 0-.2-.1-.2-.1l-.1 0c-.1 0-.1 0-.1.1a5.78 5.78 0 0 0-.7 2.5c0 1.4 1 2.7 2.4 3.2 1.2.5 2.6.4 3.7-.3a2.92 2.92 0 0 0 1.3-2.7c0-.2 0-.4 0-.5z"/></svg>
-  </div>
-</main>
-
-<script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
+<script src="https://cdn.emailjs.com/sdk/3.2.0/email.min.js"></script>
 <script>
-(() => {
-  const PUBLIC_KEY = "RN5H1CcY7Fqkakg5w"; // Your EmailJS Public Key
-  emailjs.init(PUBLIC_KEY);
+  emailjs.init('RN5H1CcY7Fqkakg5w'); // Your public key here
+</script>
 
-  // URL path routing
-  const path = window.location.pathname.toLowerCase();
+<script>
+  // -- STATE AND STORAGE KEYS --
+  const STORAGE_KEYS = {
+    PRODUCTS: 'my_store_products',
+    CART: 'my_store_cart',
+    ADMIN: 'my_store_admin',
+    CUSTOMIZATION: 'my_store_customization',
+    ORDERS: 'my_store_orders',
+  };
 
-  // Helpers
-  function qs(sel) { return document.querySelector(sel); }
-  function qsa(sel) { return document.querySelectorAll(sel); }
-  function show(el) { el.classList.remove("hidden"); }
-  function hide(el) { el.classList.add("hidden"); }
-  function saveToLS(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
-  function getFromLS(key, def=null) {
-    try {
-      const val = localStorage.getItem(key);
-      if(val) return JSON.parse(val);
-      return def;
-    } catch { return def; }
+  const state = {
+    products: [],
+    cart: [],
+    currentUser: null,
+    adminCredentials: null,
+    customization: {
+      storeName: 'My Store',
+      whatsapp: '2348012345678',
+      allowStockpiling: false,
+      deliveryFees: {
+        'Ikeja': 500,
+        'Lekki': 700,
+        'Yaba': 400,
+        'Others': 0,
+        'Outside Lagos': 1500
+      }
+    },
+    orders: [],
+  };
+
+  // --- HELPERS ---
+  function saveData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+  function loadData(key) {
+    try { return JSON.parse(localStorage.getItem(key)) || null; }
+    catch(e) { return null; }
+  }
+  function formatCurrency(num) {
+    return '₦' + Number(num).toLocaleString();
+  }
+  function showSection(id) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+    const sec = document.getElementById(id);
+    if (sec) sec.classList.add('active');
   }
 
-  // Admin auth keys in localStorage: adminEmail, adminPassHash (simple hash function used)
-  // Store keys: products, orders, settings, customers, cart
-
-  // Simple hash function for demo purposes (DO NOT USE IN PRODUCTION)
-  function simpleHash(str) {
-    let hash=0;
-    for(let i=0;i<str.length;i++){
-      hash=((hash<<5)-hash)+str.charCodeAt(i);
-      hash |= 0;
-    }
-    return hash.toString();
+  // --- INIT DATA FROM STORAGE ---
+  function initData() {
+    const p = loadData(STORAGE_KEYS.PRODUCTS);
+    if (p) state.products = p;
+    const c = loadData(STORAGE_KEYS.CART);
+    if (c) state.cart = c;
+    const a = loadData(STORAGE_KEYS.ADMIN);
+    if (a) state.adminCredentials = a;
+    const cust = loadData(STORAGE_KEYS.CUSTOMIZATION);
+    if (cust) state.customization = cust;
+    const ord = loadData(STORAGE_KEYS.ORDERS);
+    if (ord) state.orders = ord;
   }
 
-  // Initial UI elements
-  const header = qs('header');
-  const storeLogoImg = qs('#storeLogo');
-  const storeNameTitle = qs('#storeNameTitle');
-  const darkToggleBtn = qs('#darkModeToggle');
-  const cartBtn = qs('#cartBtn');
-  const cartCountSpan = qs('#cartCount');
-  const logoutBtn = qs('#logoutBtn');
-
-  // Admin UI
-  const adminLoginSection = qs('#adminLogin');
-  const adminLoginForm = qs('#adminLoginForm');
-  const adminLoginTitle = qs('#adminLoginTitle');
-  const adminEmailInput = qs('#adminEmail');
-  const adminPasswordInput = qs('#adminPassword');
-  const adminPanelSection = qs('#adminPanel');
-  const adminLogoutBtn = qs('#adminLogoutBtn');
-  const storeSettingsForm = qs('#storeSettingsForm');
-  const storeNameInput = qs('#storeNameInput');
-  const storeLogoInput = qs('#storeLogoInput');
-  const bankDetailsInput = qs('#bankDetailsInput');
-  const whatsappLinkInput = qs('#whatsappLinkInput');
-  const adminAccountForm = qs('#adminAccountForm');
-  const adminEmailChange = qs('#adminEmailChange');
-  const adminPasswordChange = qs('#adminPasswordChange');
-  const productForm = qs('#productForm');
-  const productNameInput = qs('#productNameInput');
-  const productPriceInput = qs('#productPriceInput');
-  const productDescriptionInput = qs('#productDescriptionInput');
-  const productAvailabilityInput = qs('#productAvailabilityInput');
-  const productColorsInput = qs('#productColorsInput');
-  const productSizesInput = qs('#productSizesInput');
-  const productImageInput = qs('#productImageInput');
-  const adminProductList = qs('#adminProductList');
-  const ordersList = qs('#ordersList');
-
-  // Shop UI
-  const shopAreaSection = qs('#shopArea');
-  const collectionsFilter = qs('#collectionSelect');
-  const shopProductsContainer = qs('#shopProducts');
-  const paginationControls = qs('#paginationControls');
-  const customerLoginBtn = qs('#customerLoginBtn');
-
-  // Customer login UI
-  const customerLoginSection = qs('#customerLogin');
-  const customerLoginForm = qs('#customerLoginForm');
-  const customerNameInput = qs('#customerNameInput');
-  const customerEmailInput = qs('#customerEmailInput');
-  const customerPhoneInput = qs('#customerPhoneInput');
-
-  // Cart UI
-  const cartSection = qs('#cartSection');
-  const cartItemsContainer = qs('#cartItems');
-  const cartTotalDiv = qs('#cartTotal');
-  const checkoutBtn = qs('#checkoutBtn');
-  const backToShopBtn = qs('#backToShopBtn');
-
-  // Checkout UI
-  const checkoutSection = qs('#checkoutSection');
-  const checkoutBankDetailsDiv = qs('#checkoutBankDetails');
-  const confirmPaymentBtn = qs('#confirmPaymentBtn');
-  const cancelCheckoutBtn = qs('#cancelCheckoutBtn');
-
-  // Confirmation Popup UI
-  const confirmationPopup = qs('#confirmationPopup');
-  const closeConfirmationBtn = qs('#closeConfirmationBtn');
-
-  // WhatsApp Icon
-  const whatsappIcon = qs('#whatsappIcon');
-
-  // State variables
-  let adminLoggedIn = false;
-  let currentAdminEmail = null;
-  let products = getFromLS('products', []);
-  let orders = getFromLS('orders', []);
-  let settings = getFromLS('settings', {
-    storeName: 'My Naira Store',
-    storeLogo: '',
-    bankDetails: 'Demo Bank — 0000000000',
-    whatsappLink: '',
-    emailjsServiceId: '',
-    emailjsTemplateId: '',
-  });
-  let customers = getFromLS('customers', []);
-  let cart = getFromLS('cart', []);
-  let currentCustomer = null;
-
-  // Pagination
-  const PRODUCTS_PER_PAGE = 6;
+  // --- RENDER PRODUCTS WITH PAGINATION ---
+  const ITEMS_PER_PAGE = 6;
   let currentPage = 1;
-  let currentCollection = 'all';
 
-  // Initialize theme from localStorage
-  function applyTheme(theme) {
-    if(theme === 'dark'){
-      document.documentElement.setAttribute('data-theme', 'dark');
-      darkToggleBtn.textContent = '☀️ Light Mode';
-    } else {
-      document.documentElement.setAttribute('data-theme', 'light');
-      darkToggleBtn.textContent = '🌙 Dark Mode';
-    }
-    localStorage.setItem('theme', theme);
-  }
-  function toggleTheme() {
-    const current = document.documentElement.getAttribute('data-theme');
-    applyTheme(current === 'dark' ? 'light' : 'dark');
-  }
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  applyTheme(savedTheme);
-  darkToggleBtn.addEventListener('click', toggleTheme);
+  function renderProducts(page = 1) {
+    currentPage = page;
+    const list = document.getElementById('product-list');
+    list.innerHTML = '';
+    const start = (page - 1) * ITEMS_PER_PAGE;
+    const pageProducts = state.products.slice(start, start + ITEMS_PER_PAGE);
 
-  // Helper: Validate admin credentials
-  function verifyAdmin(email, pass) {
-    const savedEmail = localStorage.getItem('adminEmail');
-    const savedPassHash = localStorage.getItem('adminPassHash');
-    if(!savedEmail || !savedPassHash) return false;
-    return savedEmail === email && savedPassHash === simpleHash(pass);
-  }
-
-  // Admin login or setup
-  function showAdminLogin(setup=false) {
-    adminLoginTitle.textContent = setup ? 'Admin Setup' : 'Admin Login';
-    adminLoginForm.querySelector('button').textContent = setup ? 'Create Admin Account' : 'Login';
-    show(adminLoginSection);
-    hide(adminPanelSection);
-    hide(shopAreaSection);
-    hide(customerLoginSection);
-    hide(cartSection);
-    hide(checkoutSection);
-    logoutBtn.classList.add('hidden');
-  }
-  function showAdminPanel() {
-    hide(adminLoginSection);
-    show(adminPanelSection);
-    hide(shopAreaSection);
-    hide(customerLoginSection);
-    hide(cartSection);
-    hide(checkoutSection);
-    logoutBtn.classList.remove('hidden');
-  }
-  // Customer shopping area UI
-  function showShopArea() {
-    hide(adminLoginSection);
-    hide(adminPanelSection);
-    show(shopAreaSection);
-    hide(customerLoginSection);
-    hide(cartSection);
-    hide(checkoutSection);
-    logoutBtn.classList.add('hidden');
-    renderStoreHeader();
-    renderCollectionsFilter();
-    renderProducts();
-    renderCartCount();
-    updateWhatsAppIcon();
-  }
-  // Customer login UI
-  function showCustomerLogin() {
-    hide(adminLoginSection);
-    hide(adminPanelSection);
-    hide(shopAreaSection);
-    show(customerLoginSection);
-    hide(cartSection);
-    hide(checkoutSection);
-  }
-  // Cart UI
-  function showCart() {
-    hide(adminLoginSection);
-    hide(adminPanelSection);
-    hide(shopAreaSection);
-    hide(customerLoginSection);
-    show(cartSection);
-    hide(checkoutSection);
-    renderCart();
-  }
-  // Checkout UI
-  function showCheckout() {
-    hide(adminLoginSection);
-    hide(adminPanelSection);
-    hide(shopAreaSection);
-    hide(customerLoginSection);
-    hide(cartSection);
-    show(checkoutSection);
-    renderCheckout();
-  }
-
-  // Render functions
-  function renderStoreHeader(){
-    storeNameTitle.textContent = settings.storeName || 'My Naira Store';
-    if(settings.storeLogo){
-      storeLogoImg.src = settings.storeLogo;
-      storeLogoImg.classList.remove('hidden');
-    } else {
-      storeLogoImg.classList.add('hidden');
-    }
-  }
-
-  function renderCollectionsFilter(){
-    const collections = new Set();
-    products.forEach(p => {
-      if(p.colors) p.colors.split(',').forEach(c => collections.add(c.trim()));
-      if(p.sizes) p.sizes.split(',').forEach(s => collections.add(s.trim()));
-    });
-    const prevVal = collectionsFilter.value;
-    collectionsFilter.innerHTML = '<option value="all">All Collections</option>';
-    collections.forEach(c => {
-      collectionsFilter.insertAdjacentHTML('beforeend', `<option value="${c}">${c}</option>`);
-    });
-    collectionsFilter.value = prevVal && collectionsFilter.querySelector(`option[value="${prevVal}"]`) ? prevVal : 'all';
-  }
-
-  // Filter products by collection (color or size)
-  function filterProductsByCollection() {
-    if(currentCollection === 'all') return products;
-    return products.filter(p => {
-      const colors = p.colors ? p.colors.toLowerCase().split(',').map(x=>x.trim()) : [];
-      const sizes = p.sizes ? p.sizes.toLowerCase().split(',').map(x=>x.trim()) : [];
-      return colors.includes(currentCollection.toLowerCase()) || sizes.includes(currentCollection.toLowerCase());
-    });
-  }
-
-  function renderProducts(){
-    const filtered = filterProductsByCollection();
-    const totalPages = Math.ceil(filtered.length / PRODUCTS_PER_PAGE);
-    if(currentPage > totalPages) currentPage = 1;
-
-    const start = (currentPage -1)*PRODUCTS_PER_PAGE;
-    const paginated = filtered.slice(start, start+PRODUCTS_PER_PAGE);
-
-    shopProductsContainer.innerHTML = '';
-    if(paginated.length === 0){
-      shopProductsContainer.innerHTML = '<p>No products found in this collection.</p>';
-      paginationControls.innerHTML = '';
-      return;
-    }
-    paginated.forEach(p => {
-      const availClass = p.availability === "true" ? 'instock' : 'outstock';
-      const availText = p.availability === "true" ? 'In Stock' : 'Out of Stock';
-      const colorsDisplay = p.colors ? p.colors.split(',').map(c => c.trim()).join(', ') : 'N/A';
-      const sizesDisplay = p.sizes ? p.sizes.split(',').map(s => s.trim()).join(', ') : 'N/A';
-
-      const productCard = document.createElement('div');
-      productCard.className = 'product-card';
-      productCard.innerHTML = `
-        <img src="${p.image}" alt="${p.name}" />
-        <h3>${p.name}</h3>
-        <div class="price">₦${Number(p.price).toLocaleString()}</div>
-        <div class="availability ${availClass}">${availText}</div>
-        <div><strong>Colors:</strong> ${colorsDisplay}</div>
-        <div><strong>Sizes:</strong> ${sizesDisplay}</div>
-        <button ${p.availability !== "true" ? 'disabled' : ''} data-id="${p.id}">Add to Cart</button>
+    pageProducts.forEach(prod => {
+      const div = document.createElement('div');
+      div.className = 'product-card';
+      div.innerHTML = `
+        <img src="${prod.image}" alt="${prod.name}" class="product-image" />
+        <div class="product-name">${prod.name}</div>
+        <div class="product-price">${formatCurrency(prod.price)}</div>
+        <div class="product-stock">Stock: ${prod.stock ?? 'Unlimited'}</div>
+        <div>
+          <label>Color:
+            <select class="color-select">
+              ${prod.colors ? prod.colors.map(c => `<option>${c.trim()}</option>`).join('') : '<option>Default</option>'}
+            </select>
+          </label>
+          <label>Size:
+            <select class="size-select">
+              ${prod.sizes ? prod.sizes.map(s => `<option>${s.trim()}</option>`).join('') : '<option>Default</option>'}
+            </select>
+          </label>
+        </div>
+        <div>
+          <label>Qty:
+            <input type="number" min="1" value="1" class="qty-input" style="width: 60px;" />
+          </label>
+        </div>
+        <button class="btn add-to-cart-btn">Add to Cart</button>
       `;
-      shopProductsContainer.appendChild(productCard);
+      list.appendChild(div);
+
+      // Add to Cart handler
+      div.querySelector('.add-to-cart-btn').onclick = () => {
+        const qty = parseInt(div.querySelector('.qty-input').value) || 1;
+        const color = div.querySelector('.color-select').value;
+        const size = div.querySelector('.size-select').value;
+        addToCart(prod.id, qty, color, size);
+      };
     });
-    renderPagination(totalPages);
+
+    renderPagination();
   }
 
-  function renderPagination(totalPages){
-    paginationControls.innerHTML = '';
-    if(totalPages <= 1) return;
-    for(let i=1;i<=totalPages;i++){
+  function renderPagination() {
+    const pagination = document.getElementById('pagination');
+    pagination.innerHTML = '';
+    const pageCount = Math.ceil(state.products.length / ITEMS_PER_PAGE);
+    if (pageCount <= 1) return;
+
+    for (let i = 1; i <= pageCount; i++) {
       const btn = document.createElement('button');
       btn.textContent = i;
       btn.disabled = (i === currentPage);
-      btn.addEventListener('click', () => {
-        currentPage = i;
-        renderProducts();
-      });
-      paginationControls.appendChild(btn);
+      btn.onclick = () => renderProducts(i);
+      pagination.appendChild(btn);
     }
   }
 
-  function renderCartCount(){
-    cartCountSpan.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+  // --- CART FUNCTIONS ---
+  function addToCart(id, qty, color, size) {
+    const prod = state.products.find(p => p.id === id);
+    if (!prod) return alert('Product not found');
+    const allowStockpiling = state.customization.allowStockpiling;
+    const existing = state.cart.find(i => i.id === id && i.color === color && i.size === size);
+    const maxStock = prod.stock ?? 9999;
+    let totalQty = qty;
+    if (existing) totalQty += existing.qty;
+    if (!allowStockpiling && totalQty > maxStock) {
+      return alert(`Cannot add ${qty}. Only ${maxStock - (existing ? existing.qty : 0)} left in stock.`);
+    }
+
+    if (existing) {
+      existing.qty += qty;
+    } else {
+      state.cart.push({ id, qty, color, size });
+    }
+    saveData(STORAGE_KEYS.CART, state.cart);
+    renderCart();
+    alert('Added to cart');
   }
 
-  // Add product to cart prompt options (color, size, qty)
-  function addToCartPrompt(productId){
-    const product = products.find(p => p.id === productId);
-    if(!product) return alert('Product not found');
-
-    let selectedColor = null;
-    let selectedSize = null;
-    let quantity = 1;
-
-    // Create modal prompt for options
-    const modal = document.createElement('div');
-    modal.style.position = 'fixed';
-    modal.style.top = '0'; modal.style.left = '0';
-    modal.style.width = '100vw'; modal.style.height = '100vh';
-    modal.style.background = 'rgba(0,0,0,0.4)';
-    modal.style.display = 'flex';
-    modal.style.alignItems = 'center';
-    modal.style.justifyContent = 'center';
-    modal.style.zIndex = '10000';
-
-    modal.innerHTML = `
-      <div style="background: var(--bg); padding: 1.5rem; border-radius: 10px; width: 320px; max-width: 90vw; box-sizing: border-box;">
-        <h3>Add "${product.name}" to Cart</h3>
-        <form id="addCartForm">
-          <label>Color</label>
-          <select id="colorSelect" ${!product.colors ? 'disabled' : ''}>
-            ${product.colors ? `<option value="">Select color</option>` + product.colors.split(',').map(c => `<option value="${c.trim()}">${c.trim()}</option>`).join('') : '<option>N/A</option>'}
-          </select>
-          <label>Size</label>
-          <select id="sizeSelect" ${!product.sizes ? 'disabled' : ''}>
-            ${product.sizes ? `<option value="">Select size</option>` + product.sizes.split(',').map(s => `<option value="${s.trim()}">${s.trim()}</option>`).join('') : '<option>N/A</option>'}
-          </select>
-          <label>Quantity</label>
-          <input type="number" id="qtyInput" min="1" value="1" />
-          <div style="margin-top:1rem; text-align: right;">
-            <button type="submit" style="margin-right: 0.5rem;">Add</button>
-            <button type="button" id="cancelAddCart">Cancel</button>
-          </div>
-        </form>
-      </div>
-    `;
-
-    document.body.appendChild(modal);
-
-    const addCartForm = modal.querySelector('#addCartForm');
-    const cancelBtn = modal.querySelector('#cancelAddCart');
-
-    addCartForm.addEventListener('submit', e => {
-      e.preventDefault();
-      selectedColor = modal.querySelector('#colorSelect').value;
-      selectedSize = modal.querySelector('#sizeSelect').value;
-      quantity = parseInt(modal.querySelector('#qtyInput').value);
-
-      if(product.colors && !selectedColor) return alert('Please select a color');
-      if(product.sizes && !selectedSize) return alert('Please select a size');
-      if(quantity <= 0) return alert('Quantity must be at least 1');
-
-      // Add or update cart
-      let existingItemIndex = cart.findIndex(i =>
-        i.productId === productId &&
-        i.color === selectedColor &&
-        i.size === selectedSize
-      );
-      if(existingItemIndex > -1){
-        cart[existingItemIndex].qty += quantity;
-      } else {
-        cart.push({
-          productId,
-          name: product.name,
-          price: product.price,
-          color: selectedColor,
-          size: selectedSize,
-          qty: quantity,
-          image: product.image
-        });
-      }
-      saveToLS('cart', cart);
-      renderCartCount();
-      alert('Added to cart!');
-      document.body.removeChild(modal);
-    });
-
-    cancelBtn.addEventListener('click', () => {
-      document.body.removeChild(modal);
-    });
-  }
-
-  // Render cart items
-  function renderCart(){
-    if(cart.length === 0){
-      cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
-      cartTotalDiv.textContent = 'Total: ₦0';
+  function renderCart() {
+    const container = document.getElementById('cart-items');
+    container.innerHTML = '';
+    if(state.cart.length === 0) {
+      container.textContent = 'Your cart is empty.';
       return;
     }
-    cartItemsContainer.innerHTML = '';
-    cart.forEach((item, index) => {
-      const itemTotal = item.qty * Number(item.price);
-      const cartItemDiv = document.createElement('div');
-      cartItemDiv.className = 'cart-item';
-      cartItemDiv.innerHTML = `
-        <img src="${item.image}" alt="${item.name}" style="height:50px; width:50px; object-fit:contain; border-radius:5px;" />
-        <div class="cart-item-details">
-          <strong>${item.name}</strong><br/>
-          <small>Color: ${item.color || 'N/A'}, Size: ${item.size || 'N/A'}</small><br/>
-          <small>₦${Number(item.price).toLocaleString()} × </small>
-          <input type="number" min="1" value="${item.qty}" class="cart-item-qty" data-index="${index}" />
-          <small> = ₦${itemTotal.toLocaleString()}</small>
+
+    state.cart.forEach((item, index) => {
+      const prod = state.products.find(p => p.id === item.id);
+      if(!prod) return;
+      const div = document.createElement('div');
+      div.className = 'cart-item';
+      div.innerHTML = `
+        <div>${prod.name} ${item.color ? '(' + item.color + ')' : ''} ${item.size ? '[' + item.size + ']' : ''}</div>
+        <div>
+          Qty: <input type="number" class="cart-qty-input" min="1" value="${item.qty}" />
+          <button class="btn remove-btn">Remove</button>
         </div>
-        <button data-index="${index}" aria-label="Remove item from cart">Remove</button>
+        <div>${formatCurrency(prod.price * item.qty)}</div>
       `;
-      cartItemsContainer.appendChild(cartItemDiv);
+      container.appendChild(div);
+
+      // Qty change handler
+      div.querySelector('.cart-qty-input').addEventListener('change', e => {
+        const newQty = parseInt(e.target.value);
+        if (isNaN(newQty) || newQty < 1) {
+          e.target.value = item.qty;
+          return;
+        }
+        const allowStockpiling = state.customization.allowStockpiling;
+        const maxStock = prod.stock ?? 9999;
+        if (!allowStockpiling && newQty > maxStock) {
+          alert(`Only ${maxStock} units in stock.`);
+          e.target.value = item.qty;
+          return;
+        }
+        item.qty = newQty;
+        saveData(STORAGE_KEYS.CART, state.cart);
+        renderCart();
+      });
+
+      // Remove handler
+      div.querySelector('.remove-btn').onclick = () => {
+        state.cart.splice(index, 1);
+        saveData(STORAGE_KEYS.CART, state.cart);
+        renderCart();
+      };
     });
-    const totalAmount = cart.reduce((sum, i) => sum + i.qty * Number(i.price), 0);
-    cartTotalDiv.textContent = `Total: ₦${totalAmount.toLocaleString()}`;
   }
 
-  // Cart event listeners for qty change and remove
-  cartItemsContainer.addEventListener('input', e => {
-    if(e.target.classList.contains('cart-item-qty')){
-      const idx = Number(e.target.dataset.index);
-      let val = parseInt(e.target.value);
-      if(isNaN(val) || val < 1) val = 1;
-      cart[idx].qty = val;
-      saveToLS('cart', cart);
-      renderCartCount();
+  // --- CHECKOUT ---
+  function getDeliveryFee(area) {
+    if (!state.customization.deliveryFees) return 0;
+    if(area === 'Others') return 0;
+    if(area === 'Outside Lagos') return state.customization.deliveryFees['Outside Lagos'] || 0;
+    return state.customization.deliveryFees[area] || 0;
+  }
+
+  function updateCheckoutSummary() {
+    const subtotal = state.cart.reduce((sum, item) => {
+      const prod = state.products.find(p => p.id === item.id);
+      return prod ? sum + prod.price * item.qty : sum;
+    }, 0);
+    const deliveryArea = document.getElementById('delivery-area').value;
+    const shippingFee = getDeliveryFee(deliveryArea);
+    document.getElementById('checkout-subtotal').textContent = formatCurrency(subtotal);
+    document.getElementById('checkout-shipping-fee').textContent = deliveryArea === 'Others' ? 'Pending' : formatCurrency(shippingFee);
+    const total = deliveryArea === 'Others' ? subtotal : subtotal + shippingFee;
+    document.getElementById('checkout-total').textContent = formatCurrency(total);
+
+    const allowStockpiling = state.customization.allowStockpiling;
+    const stockMsgDiv = document.getElementById('stockpiling-msg');
+    if(!allowStockpiling) {
+      const overStockItems = state.cart.filter(i => {
+        const prod = state.products.find(p => p.id === i.id);
+        return prod && i.qty > (prod.stock ?? 0);
+      });
+      if(overStockItems.length > 0) {
+        stockMsgDiv.style.display = 'block';
+        stockMsgDiv.textContent = 'Some items in your cart exceed current stock. Please adjust quantities.';
+      } else {
+        stockMsgDiv.style.display = 'none';
+        stockMsgDiv.textContent = '';
+      }
+    } else {
+      stockMsgDiv.style.display = 'none';
+      stockMsgDiv.textContent = '';
+    }
+  }
+
+  function populateDeliveryAreas() {
+    const select = document.getElementById('delivery-area');
+    if(!select) return;
+    select.innerHTML = '';
+    if(!state.customization.deliveryFees) return;
+
+    const areas = Object.keys(state.customization.deliveryFees)
+      .filter(a => a !== 'Others')
+      .sort();
+    areas.push('Others');
+
+    areas.forEach(area => {
+      const fee = state.customization.deliveryFees[area];
+      const option = document.createElement('option');
+      option.value = area;
+      option.textContent = area + (area === 'Others' ? ' (Contact us for fee)' : ` (₦${fee.toLocaleString()})`);
+      select.appendChild(option);
+    });
+  }
+
+  function handleDeliveryAreaChange() {
+    const select = document.getElementById('delivery-area');
+    const msgDiv = document.getElementById('delivery-area-msg');
+    const selected = select.value;
+    if(selected === 'Others') {
+      msgDiv.style.display = 'block';
+      msgDiv.innerHTML = `
+        Delivery fee for your area is not listed.<br/>
+        Please proceed with checkout, then <a href="https://wa.me/${state.customization.whatsapp}" target="_blank" style="color: #25D366; font-weight: bold;">contact us on WhatsApp</a> to arrange delivery fee and details.
+      `;
+    } else {
+      msgDiv.style.display = 'none';
+      msgDiv.textContent = '';
+    }
+    updateCheckoutSummary();
+  }
+
+  // --- ORDER HANDLING ---
+  // Save orders to localStorage (simulate backend)
+  function saveOrder(order) {
+    state.orders.push(order);
+    saveData(STORAGE_KEYS.ORDERS, state.orders);
+  }
+
+  // --- EMAILJS ---
+  // Uses your EmailJS public key, service ID, and templates from earlier
+  async function sendOrderEmails(order) {
+    const serviceID = 'service_opcf6cl'; // your service ID
+    const templateCustomer = 'template_4zrsdni'; // customer email template
+    const templateAdmin = 'template_zc87bdl'; // admin email template
+
+    try {
+      // Customer email
+      await emailjs.send(serviceID, templateCustomer, {
+        to_name: order.name,
+        to_email: order.email,
+        order_id: order.id,
+        order_details: JSON.stringify(order.items, null, 2),
+        total_amount: formatCurrency(order.total)
+      });
+
+      // Admin email
+      await emailjs.send(serviceID, templateAdmin, {
+        order_id: order.id,
+        customer_name: order.name,
+        customer_email: order.email,
+        customer_phone: order.phone,
+        delivery_address: order.address,
+        delivery_area: order.deliveryArea,
+        order_details: JSON.stringify(order.items, null, 2),
+        total_amount: formatCurrency(order.total)
+      });
+      alert('Order placed successfully! Confirmation emails sent.');
+    } catch (e) {
+      alert('Order placed but failed to send emails. Please check your EmailJS setup.');
+      console.error(e);
+    }
+  }
+
+  // --- USER AUTH ---
+  function checkLogin() {
+    if(state.currentUser && state.currentUser.email === state.adminCredentials?.email) {
+      showSection('admin-panel');
+      document.getElementById('logout-btn').style.display = 'inline-block';
+      populateAdmin();
+    } else {
+      showSection('shopping-area');
+      document.getElementById('logout-btn').style.display = 'inline-block';
+      renderProducts();
       renderCart();
+      applyCustomization();
+    }
+  }
+
+  // --- LOGIN FORM ---
+  document.getElementById('login-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const email = e.target['login-email'].value.trim();
+    const password = e.target['login-password'].value;
+    if(!state.adminCredentials) {
+      // First time setup: save these credentials as admin
+      state.adminCredentials = { email, password };
+      saveData(STORAGE_KEYS.ADMIN, state.adminCredentials);
+      alert('Admin account created! You can now login with these credentials.');
+      state.currentUser = { email };
+      checkLogin();
+      return;
+    }
+    if(state.adminCredentials.email === email && state.adminCredentials.password === password) {
+      state.currentUser = { email };
+      checkLogin();
+    } else {
+      alert('Invalid admin credentials');
     }
   });
-  cartItemsContainer.addEventListener('click', e => {
-    if(e.target.tagName === 'BUTTON' && e.target.dataset.index){
-      const idx = Number(e.target.dataset.index);
-      cart.splice(idx,1);
-      saveToLS('cart', cart);
-      renderCartCount();
-      renderCart();
-    }
+
+  // --- LOGOUT ---
+  document.getElementById('logout-btn').addEventListener('click', () => {
+    state.currentUser = null;
+    showSection('login-screen');
+    document.getElementById('logout-btn').style.display = 'none';
   });
 
-  // Render checkout section
-  function renderCheckout(){
-    checkoutBankDetailsDiv.textContent = settings.bankDetails || 'Bank details not set.';
+  // --- ADMIN PANEL ---
+
+  // Load customization data to form
+  function populateAdmin() {
+    document.getElementById('store-name-input').value = state.customization.storeName || '';
+    document.getElementById('whatsapp-input').value = state.customization.whatsapp || '';
+    document.getElementById('stockpiling-select').value = state.customization.allowStockpiling ? 'true' : 'false';
+    document.getElementById('delivery-fees-input').value = JSON.stringify(state.customization.deliveryFees, null, 2);
+    renderAdminProducts();
   }
 
-  // Handle confirm payment
-  function confirmPayment(){
-    if(!currentCustomer){
-      alert('No customer info found. Please login again.');
-      showCustomerLogin();
+  // Save customization
+  document.getElementById('customization-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const storeName = document.getElementById('store-name-input').value.trim();
+    const whatsapp = document.getElementById('whatsapp-input').value.trim();
+    const allowStockpiling = document.getElementById('stockpiling-select').value === 'true';
+    let deliveryFees = {};
+    try {
+      deliveryFees = JSON.parse(document.getElementById('delivery-fees-input').value);
+    } catch {
+      alert('Invalid JSON for delivery fees');
       return;
     }
-    if(cart.length === 0){
-      alert('Cart is empty.');
-      showShopArea();
+    state.customization = { storeName, whatsapp, allowStockpiling, deliveryFees };
+    saveData(STORAGE_KEYS.CUSTOMIZATION, state.customization);
+    alert('Customization saved');
+    applyCustomization();
+  });
+
+  // PRODUCT FORM HANDLING
+  document.getElementById('product-form').addEventListener('submit', e => {
+    e.preventDefault();
+    const id = document.getElementById('product-id').value || Date.now().toString();
+    const name = document.getElementById('product-name').value.trim();
+    const price = Number(document.getElementById('product-price').value);
+    const desc = document.getElementById('product-desc').value.trim();
+    const stock = Number(document.getElementById('product-stock').value) || null;
+    const colors = document.getElementById('product-colors').value.split(',').map(c => c.trim()).filter(c => c);
+    const sizes = document.getElementById('product-sizes').value.split(',').map(s => s.trim()).filter(s => s);
+    const image = document.getElementById('product-image').value.trim();
+
+    if (!name || !price || !image) {
+      alert('Name, Price, and Image are required');
       return;
     }
-    // Create order
-    const orderId = 'ORD' + Date.now();
-    const newOrder = {
-      id: orderId,
-      customer: currentCustomer,
-      items: cart,
-      total: cart.reduce((sum, i) => sum + i.qty * Number(i.price), 0),
-      status: 'PENDING',
-      createdAt: new Date().toISOString(),
-    };
-    orders.push(newOrder);
-    saveToLS('orders', orders);
-    cart = [];
-    saveToLS('cart', cart);
-    renderCartCount();
-    showConfirmationPopup();
 
-    // Send emails via EmailJS if configured
-    if(settings.emailjsServiceId && settings.emailjsTemplateId){
-      // Send email to store owner
-      emailjs.send(settings.emailjsServiceId, settings.emailjsTemplateId, {
-        order_id: newOrder.id,
-        customer_name: newOrder.customer.name,
-        customer_email: newOrder.customer.email,
-        customer_phone: newOrder.customer.phone,
-        items: JSON.stringify(newOrder.items),
-        total: `₦${newOrder.total.toLocaleString()}`,
-        status: newOrder.status
-      }).then(() => {
-        console.log('Order email sent to store owner.');
-      }).catch(e => console.error('EmailJS error:', e));
-      // Optionally, send confirmation email to customer here with another template
+    const existingIndex = state.products.findIndex(p => p.id === id);
+    const prodData = { id, name, price, description: desc, stock, colors, sizes, image };
+    if(existingIndex >= 0) {
+      state.products[existingIndex] = prodData;
+    } else {
+      state.products.push(prodData);
     }
-  }
+    saveData(STORAGE_KEYS.PRODUCTS, state.products);
+    alert('Product saved');
+    e.target.reset();
+    document.getElementById('product-id').value = '';
+    renderAdminProducts();
+  });
 
-  function showConfirmationPopup(){
-    confirmationPopup.style.display = 'flex';
-  }
-  function hideConfirmationPopup(){
-    confirmationPopup.style.display = 'none';
-  }
-
-  // Admin Products Render
-  function renderAdminProducts(){
-    if(products.length === 0){
-      adminProductList.innerHTML = '<p>No products added yet.</p>';
+  // Render admin products list with edit and delete
+  function renderAdminProducts() {
+    const list = document.getElementById('admin-products-list');
+    list.innerHTML = '';
+    if(state.products.length === 0) {
+      list.textContent = 'No products added yet.';
       return;
     }
-    adminProductList.innerHTML = '';
-    products.forEach((p, i) => {
-      const availClass = p.availability === "true" ? 'instock' : 'outstock';
-      const availText = p.availability === "true" ? 'In Stock' : 'Out of Stock';
-
+    state.products.forEach(prod => {
       const div = document.createElement('div');
       div.className = 'admin-product';
       div.innerHTML = `
-        <img src="${p.image}" alt="${p.name}" />
-        <div class="admin-product-details">
-          <strong>${p.name}</strong><br/>
-          ₦${Number(p.price).toLocaleString()} - <span class="${availClass}">${availText}</span><br/>
-          Colors: ${p.colors || 'N/A'}<br/>
-          Sizes: ${p.sizes || 'N/A'}
+        <img src="${prod.image}" alt="${prod.name}" />
+        <div>
+          <strong>${prod.name}</strong><br/>
+          ₦${prod.price.toLocaleString()}<br/>
+          Stock: ${prod.stock ?? 'Unlimited'}
         </div>
-        <div class="admin-product-actions">
-          <button data-index="${i}" class="editProductBtn">Edit</button>
-          <button data-index="${i}" class="deleteProductBtn">Delete</button>
+        <div>
+          <button class="admin-btn edit-btn">Edit</button>
+          <button class="admin-btn delete-btn">Delete</button>
         </div>
       `;
-      adminProductList.appendChild(div);
-    });
-  }
+      list.appendChild(div);
 
-  // Admin Orders Render
-  function renderOrders(){
-    if(orders.length === 0){
-      ordersList.innerHTML = '<p>No orders yet.</p>';
-      return;
-    }
-    ordersList.innerHTML = '';
-    orders.forEach((order, idx) => {
-      const itemsDesc = order.items.map(i => `${i.name} (Color: ${i.color}, Size: ${i.size}, Qty: ${i.qty})`).join('<br/>');
-      const orderDiv = document.createElement('div');
-      orderDiv.style.borderBottom = '1.5px solid var(--border)';
-      orderDiv.style.padding = '0.7rem 0';
-      orderDiv.innerHTML = `
-        <strong>Order ID:</strong> ${order.id}<br/>
-        <strong>Customer:</strong> ${order.customer.name} (${order.customer.email}, ${order.customer.phone})<br/>
-        <strong>Items:</strong><br/>${itemsDesc}<br/>
-        <strong>Total:</strong> ₦${Number(order.total).toLocaleString()}<br/>
-        <strong>Status:</strong> ${order.status}<br/>
-        <button data-index="${idx}" class="markPaidBtn" ${order.status==='PAID'?'disabled':''}>Mark Paid</button>
-      `;
-      ordersList.appendChild(orderDiv);
-    });
-  }
-
-  // Utility to convert uploaded file to base64
-  function fileToBase64(file){
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = e => reject(e);
-      reader.readAsDataURL(file);
-    });
-  }
-
-  // Initialization
-  function init(){
-    // Check if admin account exists
-    const adminEmailStored = localStorage.getItem('adminEmail');
-    const adminPassHashStored = localStorage.getItem('adminPassHash');
-
-    if(!adminEmailStored || !adminPassHashStored){
-      // Setup mode
-      showAdminLogin(true);
-    } else {
-      // Check path for /admin or /shop
-      if(path === '/admin'){
-        // Need login first
-        showAdminLogin(false);
-      } else if(path === '/shop' || path === '/'){
-        showShopArea();
-      } else {
-        // fallback to shop
-        showShopArea();
-      }
-    }
-    renderStoreHeader();
-  }
-  init();
-
-  // Admin login form
-  adminLoginForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = adminEmailInput.value.trim().toLowerCase();
-    const pass = adminPasswordInput.value.trim();
-    if(!email || !pass){
-      alert('Please enter email and password.');
-      return;
-    }
-    if(localStorage.getItem('adminEmail')){
-      // login mode
-      if(verifyAdmin(email, pass)){
-        adminLoggedIn = true;
-        currentAdminEmail = email;
-        adminEmailInput.value = '';
-        adminPasswordInput.value = '';
-        showAdminPanel();
-        loadAdminData();
-      } else {
-        alert('Invalid admin credentials.');
-      }
-    } else {
-      // setup mode
-      localStorage.setItem('adminEmail', email);
-      localStorage.setItem('adminPassHash', simpleHash(pass));
-      alert('Admin account created. Please log in.');
-      showAdminLogin(false);
-    }
-  });
-
-  // Admin logout buttons
-  adminLogoutBtn.addEventListener('click', () => {
-    adminLoggedIn = false;
-    currentAdminEmail = null;
-    showAdminLogin(false);
-  });
-  logoutBtn.addEventListener('click', () => {
-    adminLoggedIn = false;
-    currentAdminEmail = null;
-    showAdminLogin(false);
-  });
-
-  // Load admin data into forms
-  function loadAdminData(){
-    storeNameInput.value = settings.storeName || '';
-    bankDetailsInput.value = settings.bankDetails || '';
-    whatsappLinkInput.value = settings.whatsappLink || '';
-    adminEmailChange.value = localStorage.getItem('adminEmail') || '';
-    adminPasswordChange.value = '';
-    renderAdminProducts();
-    renderOrders();
-    renderStoreHeader();
-    updateWhatsAppIcon();
-  }
-
-  // Store Settings form submit
-  storeSettingsForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    settings.storeName = storeNameInput.value.trim() || 'My Naira Store';
-    settings.bankDetails = bankDetailsInput.value.trim() || 'Demo Bank — 0000000000';
-    settings.whatsappLink = whatsappLinkInput.value.trim() || '';
-    // Logo file base64
-    if(storeLogoInput.files.length > 0){
-      const file = storeLogoInput.files[0];
-      try {
-        const base64 = await fileToBase64(file);
-        settings.storeLogo = base64;
-      } catch(e) {
-        alert('Error loading logo image.');
-        return;
-      }
-    }
-    saveToLS('settings', settings);
-    alert('Store settings saved.');
-    renderStoreHeader();
-    updateWhatsAppIcon();
-  });
-
-  // Admin Account change form
-  adminAccountForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const newEmail = adminEmailChange.value.trim().toLowerCase();
-    const newPass = adminPasswordChange.value.trim();
-    if(newEmail){
-      localStorage.setItem('adminEmail', newEmail);
-    }
-    if(newPass){
-      localStorage.setItem('adminPassHash', simpleHash(newPass));
-    }
-    alert('Admin account updated.');
-    adminEmailChange.value = '';
-    adminPasswordChange.value = '';
-  });
-
-  // Product image upload preview & base64 conversion on add/edit
-  let currentEditProductIndex = null;
-
-  productForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const name = productNameInput.value.trim();
-    const price = Number(productPriceInput.value);
-    const description = productDescriptionInput.value.trim();
-    const availability = productAvailabilityInput.value;
-    const colors = productColorsInput.value.trim();
-    const sizes = productSizesInput.value.trim();
-    let imageBase64 = null;
-
-    if(!name || !price || !productAvailabilityInput.value) {
-      alert('Please fill required fields.');
-      return;
-    }
-
-    if(productImageInput.files.length > 0){
-      try {
-        imageBase64 = await fileToBase64(productImageInput.files[0]);
-      } catch {
-        alert('Failed to load product image.');
-        return;
-      }
-    } else if(currentEditProductIndex !== null){
-      imageBase64 = products[currentEditProductIndex].image;
-    } else {
-      alert('Please upload a product image.');
-      return;
-    }
-
-    if(currentEditProductIndex !== null){
-      // update existing
-      products[currentEditProductIndex] = {
-        ...products[currentEditProductIndex],
-        name, price, description, availability, colors, sizes, image: imageBase64
+      div.querySelector('.edit-btn').onclick = () => {
+        document.getElementById('product-id').value = prod.id;
+        document.getElementById('product-name').value = prod.name;
+        document.getElementById('product-price').value = prod.price;
+        document.getElementById('product-desc').value = prod.description;
+        document.getElementById('product-stock').value = prod.stock ?? '';
+        document.getElementById('product-colors').value = prod.colors ? prod.colors.join(', ') : '';
+        document.getElementById('product-sizes').value = prod.sizes ? prod.sizes.join(', ') : '';
+        document.getElementById('product-image').value = prod.image;
       };
-      alert('Product updated.');
-      currentEditProductIndex = null;
-      productForm.querySelector('#addProductBtn').textContent = 'Add Product';
-    } else {
-      // add new
-      products.push({
-        id: 'P' + Date.now(),
-        name, price, description, availability, colors, sizes, image: imageBase64
-      });
-      alert('Product added.');
-    }
 
-    saveToLS('products', products);
-    renderAdminProducts();
-    productForm.reset();
-  });
+      div.querySelector('.delete-btn').onclick = () => {
+        if(confirm(`Delete product "${prod.name}"?`)) {
+          state.products = state.products.filter(p => p.id !== prod.id);
+          saveData(STORAGE_KEYS.PRODUCTS, state.products);
+          renderAdminProducts();
+        }
+      };
+    });
+  }
 
-  // Edit / Delete product buttons
-  adminProductList.addEventListener('click', async (e) => {
-    if(e.target.classList.contains('editProductBtn')){
-      const idx = Number(e.target.dataset.index);
-      currentEditProductIndex = idx;
-      const p = products[idx];
-      productNameInput.value = p.name;
-      productPriceInput.value = p.price;
-      productDescriptionInput.value = p.description;
-      productAvailabilityInput.value = p.availability;
-      productColorsInput.value = p.colors;
-      productSizesInput.value = p.sizes;
-      productForm.querySelector('#addProductBtn').textContent = 'Update Product';
-      window.scrollTo({top:0,behavior:'smooth'});
-    } else if(e.target.classList.contains('deleteProductBtn')){
-      const idx = Number(e.target.dataset.index);
-      if(confirm('Delete this product?')){
-        products.splice(idx,1);
-        saveToLS('products', products);
-        renderAdminProducts();
-      }
-    }
-  });
-
-  // Orders mark paid button
-  ordersList.addEventListener('click', (e) => {
-    if(e.target.classList.contains('markPaidBtn')){
-      const idx = Number(e.target.dataset.index);
-      const order = orders[idx];
-      if(order.status !== 'PAID'){
-        order.status = 'PAID';
-        saveToLS('orders', orders);
-        renderOrders();
-        alert(`Order ${order.id} marked as PAID.`);
-        // Optionally, send payment confirmation email to customer here
-      }
-    }
-  });
-
-  // Shop add to cart buttons
-  shopProductsContainer.addEventListener('click', e => {
-    if(e.target.tagName === 'BUTTON' && e.target.dataset.id){
-      const id = e.target.dataset.id;
-      addToCartPrompt(id);
-    }
-  });
-
-  // Collections filter change
-  collectionsFilter.addEventListener('change', () => {
-    currentCollection = collectionsFilter.value;
-    currentPage = 1;
+  // --- NAVIGATION BUTTONS ---
+  document.getElementById('back-to-shop-btn').addEventListener('click', () => {
+    state.currentUser = null;
+    showSection('shopping-area');
+    document.getElementById('logout-btn').style.display = 'none';
     renderProducts();
+    renderCart();
+    applyCustomization();
   });
 
-  // Cart button click
-  cartBtn.addEventListener('click', () => {
-    if(cart.length === 0){
-      alert('Your cart is empty.');
+  // --- CHECKOUT PROCESS ---
+  document.getElementById('proceed-to-checkout').addEventListener('click', () => {
+    if(state.cart.length === 0) {
+      alert('Your cart is empty');
       return;
     }
-    showCart();
+    populateDeliveryAreas();
+    handleDeliveryAreaChange();
+    updateCheckoutSummary();
+    document.getElementById('checkout').classList.remove('hidden');
+    window.scrollTo(0,document.body.scrollHeight);
   });
 
-  // Customer login button in shop
-  customerLoginBtn.addEventListener('click', () => {
-    showCustomerLogin();
-  });
+  document.getElementById('delivery-area').addEventListener('change', handleDeliveryAreaChange);
 
-  // Customer login form
-  customerLoginForm.addEventListener('submit', (e) => {
+  document.getElementById('checkout-form').addEventListener('submit', async e => {
     e.preventDefault();
-    const name = customerNameInput.value.trim();
-    const email = customerEmailInput.value.trim().toLowerCase();
-    const phone = customerPhoneInput.value.trim();
-    if(!name || !email || !phone){
-      alert('Please fill all fields.');
+    const name = e.target['checkout-name'].value.trim();
+    const email = e.target['checkout-email'].value.trim();
+    const phone = e.target['checkout-phone'].value.trim();
+    const address = e.target['checkout-address'].value.trim();
+    const deliveryArea = e.target['delivery-area'].value;
+
+    if(!name || !email || !phone || !address || !deliveryArea) {
+      alert('Please fill in all fields');
       return;
     }
-    currentCustomer = {name, email, phone};
-    customers.push(currentCustomer);
-    saveToLS('customers', customers);
-    alert('Welcome, ' + name + '! Proceed to your cart.');
-    customerLoginForm.reset();
-    showCart();
+
+    // Calculate totals again
+    const subtotal = state.cart.reduce((sum, item) => {
+      const prod = state.products.find(p => p.id === item.id);
+      return prod ? sum + prod.price * item.qty : sum;
+    }, 0);
+    const shippingFee = getDeliveryFee(deliveryArea);
+    const total = deliveryArea === 'Others' ? subtotal : subtotal + shippingFee;
+
+    // Save order
+    const order = {
+      id: Date.now().toString(),
+      name, email, phone, address, deliveryArea,
+      items: JSON.parse(JSON.stringify(state.cart)), // deep copy
+      total,
+      status: 'PENDING',
+      date: new Date().toISOString()
+    };
+    saveOrder(order);
+
+    // Clear cart
+    state.cart = [];
+    saveData(STORAGE_KEYS.CART, state.cart);
+    renderCart();
+    document.getElementById('checkout').classList.add('hidden');
+
+    // Send emails with EmailJS
+    await sendOrderEmails(order);
   });
 
-  // Cart buttons
-  checkoutBtn.addEventListener('click', () => {
-    showCheckout();
-  });
-  backToShopBtn.addEventListener('click', () => {
-    showShopArea();
-  });
+  // --- DARK MODE ---
+  const darkModeToggle = document.getElementById('dark-mode-toggle');
+  function loadDarkMode() {
+    const saved = localStorage.getItem('dark_mode');
+    if(saved === 'true') document.body.classList.add('dark');
+  }
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark');
+    localStorage.setItem('dark_mode', document.body.classList.contains('dark'));
+  }
+  darkModeToggle.onclick = toggleDarkMode;
 
-  cancelCheckoutBtn.addEventListener('click', () => {
-    showCart();
-  });
-
-  confirmPaymentBtn.addEventListener('click', () => {
-    confirmPayment();
-  });
-
-  closeConfirmationBtn.addEventListener('click', () => {
-    hideConfirmationPopup();
-    showShopArea();
-  });
-
-  // Update WhatsApp icon
-  function updateWhatsAppIcon(){
-    if(settings.whatsappLink){
-      whatsappIcon.classList.remove('hidden');
-      whatsappIcon.onclick = () => {
-        window.open(settings.whatsappLink, '_blank');
-      };
-      whatsappIcon.onkeypress = (e) => {
-        if(e.key === 'Enter' || e.key === ' ') whatsappIcon.click();
-      };
-    } else {
-      whatsappIcon.classList.add('hidden');
-    }
+  // --- CUSTOMIZATION APPLY ---
+  function applyCustomization() {
+    document.querySelectorAll('.store-name').forEach(el => el.textContent = state.customization.storeName || 'My Store');
+    const whatsappLink = document.getElementById('whatsapp-link');
+    whatsappLink.href = `https://wa.me/${state.customization.whatsapp || '2348012345678'}`;
   }
 
-  // Render cart count on load
-  renderCartCount();
+  // --- ON LOAD ---
+  (function() {
+    initData();
+    loadDarkMode();
 
-  // Routing logic - show admin panel if logged in and path is /admin
-  if(path === '/admin'){
-    if(localStorage.getItem('adminEmail')){
-      showAdminLogin(false);
+    if(state.currentUser && state.currentUser.email === state.adminCredentials?.email) {
+      checkLogin();
     } else {
-      showAdminLogin(true);
+      showSection('login-screen');
     }
-  } else if(path === '/shop' || path === '/'){
-    showShopArea();
-  } else {
-    showShopArea();
-  }
-})();
+  })();
 </script>
+
 </body>
 </html>
