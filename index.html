@@ -3,566 +3,1388 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Essys Essentials</title>
+<title>My Naira Store</title>
 <style>
   :root {
-    --main-color: #2a9d8f;
-    --accent-color: #e76f51;
-    --bg-color: #f4f4f4;
-    --text-color: #333;
-    --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    --bg: #fff;
+    --text: #222;
+    --primary: #007bff;
+    --secondary: #6c757d;
+    --header-bg: var(--primary);
+    --header-text: #fff;
+    --border: #ddd;
+  }
+  [data-theme="dark"] {
+    --bg: #121212;
+    --text: #eee;
+    --primary: #9b59b6;
+    --secondary: #ccc;
+    --header-bg: #2d2d2d;
+    --header-text: #eee;
+    --border: #444;
   }
   body {
-    margin: 0; 
-    background: var(--bg-color); 
-    font-family: var(--font-family); 
-    color: var(--text-color);
+    margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+      Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+    display: flex; flex-direction: column;
   }
-  header, footer {
-    background: var(--main-color); 
-    color: white; 
-    padding: 1rem; 
-    text-align: center;
+  header {
+    background: var(--header-bg);
+    color: var(--header-text);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
-  .logo {
-    height: 50px; 
-    vertical-align: middle;
+  header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    display: flex; align-items: center;
+    gap: 0.5rem;
+  }
+  header img#storeLogo {
+    height: 40px;
+    max-width: 150px;
+    object-fit: contain;
+  }
+  header .actions {
+    display: flex;
+    gap: 0.7rem;
+    align-items: center;
+  }
+  button, input[type="button"] {
+    background: var(--primary);
+    border: none;
+    color: white;
+    padding: 0.4rem 0.9rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background 0.25s;
+  }
+  button:hover, input[type="button"]:hover {
+    background: #0056b3;
+  }
+  a {
+    color: var(--primary);
+    text-decoration: none;
+  }
+  a:hover {
+    text-decoration: underline;
   }
   main {
-    max-width: 900px; 
-    margin: auto; 
-    padding: 1rem;
+    flex-grow: 1;
+    max-width: 1100px;
+    margin: 1rem auto 3rem;
+    width: 90%;
   }
-  button {
-    background: var(--accent-color); 
-    border: none; 
-    color: white; 
-    padding: 0.5rem 1rem; 
-    cursor: pointer; 
-    border-radius: 4px;
+  .hidden {
+    display: none !important;
   }
-  button:hover {
-    background: #d45a39;
+  .dark-toggle {
+    background: transparent;
+    border: 1.5px solid var(--header-text);
+    color: var(--header-text);
+    font-weight: 600;
+    padding: 0.3rem 0.7rem;
+    border-radius: 5px;
   }
-  .product-grid {
-    display: grid; 
-    grid-template-columns: repeat(auto-fill,minmax(200px,1fr)); 
+  .dark-toggle:hover {
+    background: var(--header-text);
+    color: var(--header-bg);
+  }
+  input, select, textarea {
+    font-size: 1rem;
+    padding: 0.5rem;
+    border: 1.5px solid var(--border);
+    border-radius: 5px;
+    width: 100%;
+    background: var(--bg);
+    color: var(--text);
+    margin-top: 0.3rem;
+    margin-bottom: 0.8rem;
+    box-sizing: border-box;
+  }
+  label {
+    font-weight: 600;
+    display: block;
+    margin-top: 1rem;
+  }
+  .form-group {
+    margin-bottom: 0.8rem;
+  }
+  /* Layout for 2-column product grid */
+  #shopProducts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(260px,1fr));
     gap: 1rem;
   }
   .product-card {
-    background: white; 
-    padding: 1rem; 
-    border-radius: 8px; 
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg);
+    transition: box-shadow 0.25s;
+  }
+  .product-card:hover {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   }
   .product-card img {
-    width: 100%; 
-    height: 150px; 
-    object-fit: contain; 
-    border-radius: 4px;
+    max-width: 100%;
+    height: 180px;
+    object-fit: contain;
+    border-radius: 5px;
+    margin-bottom: 0.5rem;
   }
-  .cart {
-    position: fixed; 
-    top: 1rem; 
-    right: 1rem; 
-    background: var(--accent-color); 
-    color: white; 
-    padding: 0.5rem 1rem; 
-    border-radius: 50%;
-    font-weight: bold; 
-    cursor: pointer;
+  .product-card h3 {
+    margin: 0 0 0.3rem;
+    font-size: 1.2rem;
   }
-  .hidden { display: none; }
-
-  #adminPanel {
-    background: white; 
-    padding: 1rem; 
-    max-width: 600px; 
-    margin: 1rem auto; 
-    border-radius: 8px; 
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    position: relative; 
-    z-index: 10;
+  .product-card .price {
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
   }
-
-  #adminPanel input, #adminPanel textarea, #adminPanel select {
-    width: 100%; 
-    margin-bottom: 0.5rem; 
-    padding: 0.4rem; 
-    border-radius: 4px; 
-    border: 1px solid #ccc;
+  .product-card .availability {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
   }
-
-  #customization {
-    margin-top: 1rem;
-    border-top: 1px solid #ddd;
-    padding-top: 1rem;
+  .product-card .availability.instock {
+    color: green;
   }
-
-  #messageBox {
-    margin-top: 1rem;
-    padding: 0.5rem; 
-    background: #eee; 
-    border-radius: 4px;
+  .product-card .availability.outstock {
+    color: red;
   }
-
-  #whatsappContact {
-    position: fixed; 
-    bottom: 1rem; 
-    right: 1rem; 
-    background: #25D366; 
-    color: white; 
-    padding: 0.75rem 1rem; 
-    border-radius: 50px; 
-    font-weight: bold;
-    text-decoration: none;
+  .product-card button {
+    margin-top: auto;
   }
-
-  nav {
-    margin-bottom: 1rem; 
-    text-align: right;
-  }
-
-  nav button {
-    margin-left: 0.5rem;
-  }
-
+  /* Pagination */
   .pagination {
-    margin-top: 1rem; 
+    margin: 1rem 0;
     text-align: center;
   }
-
   .pagination button {
     margin: 0 0.25rem;
+    min-width: 35px;
   }
-
-  /* Admin Login Modal */
-  #adminLoginModal {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    background: rgba(0,0,0,0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+  /* Collections filter */
+  #collectionsFilter {
+    margin-bottom: 1rem;
   }
-
-  #adminLoginModal.hidden {
-    display: none;
+  #collectionsFilter select {
+    max-width: 250px;
   }
-
-  #adminLoginModal > div {
-    background: white;
-    padding: 2rem;
+  /* Cart styles */
+  #cartSection {
+    max-width: 450px;
+    margin: 2rem auto;
+    border: 1.5px solid var(--border);
     border-radius: 8px;
-    max-width: 300px;
-    width: 90%;
+    padding: 1rem;
+    background: var(--bg);
   }
-
+  #cartItems {
+    margin-bottom: 1rem;
+  }
+  #cartItems .cart-item {
+    border-bottom: 1px solid var(--border);
+    padding: 0.4rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+  #cartItems .cart-item:last-child {
+    border-bottom: none;
+  }
+  #cartItems .cart-item-details {
+    flex-grow: 1;
+  }
+  #cartItems .cart-item-qty {
+    width: 50px;
+  }
+  #cartTotal {
+    font-weight: 700;
+    font-size: 1.2rem;
+    text-align: right;
+    margin-top: 0.8rem;
+  }
+  /* Forms inside admin */
+  #adminPanel {
+    max-width: 700px;
+    margin: 1rem auto 4rem;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 1.2rem 1.5rem;
+  }
+  #adminPanel h2 {
+    margin-top: 0;
+  }
+  #adminPanel .product-list {
+    margin: 1rem 0 0;
+    max-height: 300px;
+    overflow-y: auto;
+    border-top: 1.5px solid var(--border);
+    padding-top: 1rem;
+  }
+  #adminPanel .product-list .admin-product {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.7rem;
+    align-items: center;
+  }
+  #adminPanel .product-list .admin-product img {
+    height: 50px;
+    width: 50px;
+    object-fit: contain;
+    border-radius: 5px;
+  }
+  #adminPanel .product-list .admin-product-details {
+    flex-grow: 1;
+  }
+  #adminPanel .product-list .admin-product-actions button {
+    margin-left: 0.5rem;
+    font-size: 0.9rem;
+  }
+  /* Admin login */
+  #adminLogin {
+    max-width: 350px;
+    margin: 3rem auto 1rem;
+    padding: 1.5rem 2rem;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+  }
+  #adminLogin h2 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  #adminLogin label {
+    font-weight: 600;
+  }
+  #adminLogin input {
+    margin-bottom: 1rem;
+  }
+  /* Customer login/sign-up */
+  #customerLogin {
+    max-width: 350px;
+    margin: 2rem auto 2rem;
+    padding: 1rem 1.2rem;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+  }
+  #customerLogin h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  #customerLogin label {
+    font-weight: 600;
+  }
+  #customerLogin input {
+    margin-bottom: 0.8rem;
+  }
+  #customerLogin button {
+    width: 100%;
+  }
+  /* Checkout */
+  #checkoutSection {
+    max-width: 400px;
+    margin: 2rem auto 3rem;
+    padding: 1rem 1.2rem;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg);
+  }
+  #checkoutSection h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+  }
+  /* Confirmation popup */
+  #confirmationPopup {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+  }
+  #confirmationPopup .popup-content {
+    background: var(--bg);
+    padding: 1.8rem 2rem;
+    border-radius: 12px;
+    max-width: 320px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+  }
+  #confirmationPopup button {
+    margin-top: 1rem;
+  }
+  /* WhatsApp floating icon */
+  #whatsappIcon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #25d366;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 9999;
+  }
+  #whatsappIcon svg {
+    fill: white;
+    width: 28px;
+    height: 28px;
+  }
+  /* Responsive tweaks */
+  @media (max-width: 600px) {
+    #shopProducts {
+      grid-template-columns: 1fr !important;
+    }
+    header {
+      flex-direction: column;
+      gap: 0.7rem;
+      align-items: flex-start;
+    }
+  }
 </style>
 </head>
 <body>
-
 <header>
-  <img src="" alt="Logo" id="siteLogo" class="logo" />
-  <h1>Essys Essentials</h1>
-  <nav>
-    <button id="adminLoginBtn">Admin Login</button>
-    <button id="adminLogoutBtn" class="hidden">Logout Admin</button>
-    <button id="viewCartBtn">Cart (<span id="cartCount">0</span>)</button>
-  </nav>
+  <h1><img id="storeLogo" src="" alt="Store Logo" class="hidden" /> <span id="storeNameTitle">My Naira Store</span></h1>
+  <div class="actions">
+    <button id="darkModeToggle" class="dark-toggle">🌙 Dark Mode</button>
+    <button id="cartBtn">Cart (<span id="cartCount">0</span>)</button>
+    <button id="logoutBtn" class="hidden">Logout Admin</button>
+  </div>
 </header>
+<main>
+  <!-- Admin Login / Setup -->
+  <section id="adminLogin" class="hidden" aria-label="Admin Login Section">
+    <h2 id="adminLoginTitle">Admin Setup</h2>
+    <form id="adminLoginForm">
+      <label for="adminEmail">Admin Email</label>
+      <input type="email" id="adminEmail" required autocomplete="username" />
+      <label for="adminPassword">Password</label>
+      <input type="password" id="adminPassword" required autocomplete="current-password" />
+      <button type="submit" id="adminLoginSubmit">Create Admin Account</button>
+    </form>
+  </section>
 
-<main id="customerView">
+  <!-- Admin Dashboard -->
+  <section id="adminPanel" class="hidden" aria-label="Admin Dashboard">
+    <h2>Admin Dashboard</h2>
+    <button id="adminLogoutBtn">Logout</button>
+    <h3>Store Settings</h3>
+    <form id="storeSettingsForm">
+      <label for="storeNameInput">Store Name</label>
+      <input type="text" id="storeNameInput" />
+      <label for="storeLogoInput">Store Logo (PNG/JPG)</label>
+      <input type="file" id="storeLogoInput" accept="image/png, image/jpeg" />
+      <label for="bankDetailsInput">Bank Details</label>
+      <textarea id="bankDetailsInput" rows="2" placeholder="Bank name, account number, etc."></textarea>
+      <label for="whatsappLinkInput">WhatsApp Link (https://wa.me/number)</label>
+      <input type="url" id="whatsappLinkInput" placeholder="https://wa.me/234XXXXXXXXXX" />
+      <button type="submit">Save Store Settings</button>
+    </form>
+    <hr />
+    <h3>Manage Admin Account</h3>
+    <form id="adminAccountForm">
+      <label for="adminEmailChange">Change Admin Email</label>
+      <input type="email" id="adminEmailChange" />
+      <label for="adminPasswordChange">Change Admin Password</label>
+      <input type="password" id="adminPasswordChange" />
+      <button type="submit">Update Admin Account</button>
+    </form>
+    <hr />
+    <h3>Products</h3>
+    <form id="productForm">
+      <label for="productNameInput">Product Name</label>
+      <input type="text" id="productNameInput" required />
+      <label for="productPriceInput">Price (₦)</label>
+      <input type="number" id="productPriceInput" required min="0" step="100" />
+      <label for="productDescriptionInput">Description</label>
+      <textarea id="productDescriptionInput" rows="3"></textarea>
+      <label for="productAvailabilityInput">Availability</label>
+      <select id="productAvailabilityInput">
+        <option value="true" selected>In Stock</option>
+        <option value="false">Out of Stock</option>
+      </select>
+      <label for="productColorsInput">Colors (comma separated)</label>
+      <input type="text" id="productColorsInput" placeholder="e.g. Red, Blue, Green" />
+      <label for="productSizesInput">Sizes (comma separated)</label>
+      <input type="text" id="productSizesInput" placeholder="e.g. S, M, L, XL" />
+      <label for="productImageInput">Product Image (PNG/JPG)</label>
+      <input type="file" id="productImageInput" accept="image/png, image/jpeg" />
+      <button type="submit" id="addProductBtn">Add Product</button>
+    </form>
+    <div class="product-list" id="adminProductList"></div>
+    <hr />
+    <h3>Orders</h3>
+    <div id="ordersList"></div>
+  </section>
 
-  <div id="productGrid" class="product-grid"></div>
+  <!-- Shopping Area -->
+  <section id="shopArea" class="hidden" aria-label="Shopping Area">
+    <h2>Browse Collections</h2>
+    <div id="collectionsFilter">
+      <select id="collectionSelect">
+        <option value="all">All Collections</option>
+      </select>
+    </div>
+    <div id="shopProducts"></div>
+    <div class="pagination" id="paginationControls"></div>
+    <button id="customerLoginBtn">Login / Sign Up</button>
+  </section>
 
-  <div class="pagination" id="pagination"></div>
+  <!-- Customer Login / Signup -->
+  <section id="customerLogin" class="hidden" aria-label="Customer Login Section">
+    <h3>Customer Account</h3>
+    <form id="customerLoginForm">
+      <label for="customerNameInput">Name</label>
+      <input type="text" id="customerNameInput" required />
+      <label for="customerEmailInput">Email</label>
+      <input type="email" id="customerEmailInput" required />
+      <label for="customerPhoneInput">Phone Number</label>
+      <input type="tel" id="customerPhoneInput" required />
+      <button type="submit" id="customerLoginSubmit">Continue to Cart</button>
+    </form>
+  </section>
 
-  <div id="messageBox"></div>
-
-  <div id="checkoutSection" class="hidden">
-    <h2>Checkout</h2>
-    <p>Bank Transfer Info:</p>
-    <p id="bankDetails"></p>
-    <p>Or pay with card (mock payment):</p>
-    <button id="mockPayBtn">Pay with Card</button>
+  <!-- Cart -->
+  <section id="cartSection" class="hidden" aria-label="Shopping Cart">
+    <h2>Your Cart</h2>
+    <div id="cartItems"></div>
+    <div id="cartTotal">Total: ₦0</div>
+    <button id="checkoutBtn">Proceed to Checkout</button>
     <button id="backToShopBtn">Back to Shop</button>
+  </section>
+
+  <!-- Checkout -->
+  <section id="checkoutSection" class="hidden" aria-label="Checkout Section">
+    <h3>Checkout</h3>
+    <div id="checkoutBankDetails"></div>
+    <button id="confirmPaymentBtn">I’ve Paid</button>
+    <button id="cancelCheckoutBtn">Cancel</button>
+  </section>
+
+  <!-- Confirmation Popup -->
+  <div id="confirmationPopup" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle" aria-describedby="confirmationDesc">
+    <div class="popup-content">
+      <h3 id="confirmationTitle">Order Confirmed!</h3>
+      <p id="confirmationDesc">Thank you for your order. We will notify you once payment is confirmed.</p>
+      <button id="closeConfirmationBtn">Close</button>
+    </div>
   </div>
 
+  <!-- WhatsApp Icon -->
+  <div id="whatsappIcon" title="Contact us on WhatsApp" class="hidden" role="button" tabindex="0" aria-label="WhatsApp contact link">
+    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.5 3.5a11.6 11.6 0 0 0-16.4 16.4l-2 5.5 5.5-2a11.6 11.6 0 0 0 13-19.9zm-7.1 14.8c-1.6 0-3.1-.9-4-2.3l-.3-.4-2.5 1 1-2.4-.3-.4a6.78 6.78 0 0 1 10-8.6 6.9 6.9 0 0 1-3.9 12.7zm3.2-5.3-.2-.4c-.1-.2-.2-.2-.3-.3-.1 0-.2 0-.4 0s-.3 0-.4.1l-.4.1-.3.1a3.24 3.24 0 0 1-1.2-1.2l-.2-.4-.4-.3c-.1 0-.2-.1-.2-.1l-.1 0c-.1 0-.1 0-.1.1a5.78 5.78 0 0 0-.7 2.5c0 1.4 1 2.7 2.4 3.2 1.2.5 2.6.4 3.7-.3a2.92 2.92 0 0 0 1.3-2.7c0-.2 0-.4 0-.5z"/></svg>
+  </div>
 </main>
 
-<div id="adminPanel" class="hidden">
-  <h2>Admin Panel</h2>
-
-  <label>Upload Product Image:</label>
-  <input type="file" id="productImageInput" accept="image/*" capture="environment" />
-
-  <label>Product Name:</label>
-  <input type="text" id="productNameInput" />
-
-  <label>Product Description:</label>
-  <textarea id="productDescInput"></textarea>
-
-  <label>Product Price (₦):</label>
-  <input type="number" id="productPriceInput" min="0" />
-
-  <button id="addProductBtn">Add Product</button>
-
-  <hr />
-
-  <h3>Customize Website</h3>
-
-  <label>Business Logo:</label>
-  <input type="file" id="logoUpload" accept="image/*" capture="environment" />
-
-  <label>Main Color:</label>
-  <input type="color" id="colorPickerMain" value="#2a9d8f" />
-
-  <label>Accent Color:</label>
-  <input type="color" id="colorPickerAccent" value="#e76f51" />
-
-  <label>Background Color:</label>
-  <input type="color" id="colorPickerBg" value="#f4f4f4" />
-
-  <label>Font Color:</label>
-  <input type="color" id="colorPickerText" value="#333333" />
-
-  <button id="saveCustomizationBtn">Save Customization</button>
-
-  <hr />
-
-  <h3>Business Info</h3>
-
-  <label>WhatsApp Number (include country code, e.g. +2348012345678):</label>
-  <input type="text" id="whatsappInput" placeholder="+234..." />
-
-  <label>Bank Account Details:</label>
-  <textarea id="bankInput" placeholder="Bank name, Account number, Account name..."></textarea>
-
-  <hr />
-
-  <h3>Custom Message for Customers</h3>
-  <textarea id="customMessageInput" placeholder="Write a message to customers here..."></textarea>
-  <button id="saveMessageBtn">Save Message</button>
-</div>
-
-<!-- Admin Login Modal -->
-<div id="adminLoginModal" class="hidden">
-  <div>
-    <h2>Admin Login</h2>
-    <input type="password" id="adminPassword" placeholder="Enter password" style="width: 100%; padding: 0.5rem; margin-bottom: 1rem;" />
-    <button id="adminLoginSubmitBtn">Login</button>
-    <button id="adminLoginCancelBtn" style="margin-left: 1rem;">Cancel</button>
-    <p id="loginError" style="color: red; margin-top: 0.5rem;"></p>
-  </div>
-</div>
-
-<a href="#" id="whatsappContact" target="_blank" class="hidden">WhatsApp Us</a>
-
+<script src="https://cdn.emailjs.com/sdk/2.3.2/email.min.js"></script>
 <script>
-  // Data and state
-  let products = JSON.parse(localStorage.getItem('ee_products')) || [];
-  let customization = JSON.parse(localStorage.getItem('ee_customization')) || {
-    mainColor: '#2a9d8f',
-    accentColor: '#e76f51',
-    bgColor: '#f4f4f4',
-    textColor: '#333333',
-    logoDataUrl: '',
-    whatsapp: '',
-    bankDetails: '',
-    customMessage: '',
-  };
-  let cart = JSON.parse(localStorage.getItem('ee_cart')) || [];
-  let adminLoggedIn = false;
-  const adminPassword = 'admin123';
+(() => {
+  const PUBLIC_KEY = "RN5H1CcY7Fqkakg5w"; // Your EmailJS Public Key
+  emailjs.init(PUBLIC_KEY);
 
-  // Elements
-  const adminLoginBtn = document.getElementById('adminLoginBtn');
-  const adminLogoutBtn = document.getElementById('adminLogoutBtn');
-  const adminLoginModal = document.getElementById('adminLoginModal');
-  const adminLoginSubmitBtn = document.getElementById('adminLoginSubmitBtn');
-  const adminLoginCancelBtn = document.getElementById('adminLoginCancelBtn');
-  const adminPasswordInput = document.getElementById('adminPassword');
-  const loginError = document.getElementById('loginError');
-  const adminPanel = document.getElementById('adminPanel');
-  const customerView = document.getElementById('customerView');
-  const productGrid = document.getElementById('productGrid');
-  const addProductBtn = document.getElementById('addProductBtn');
-  const productImageInput = document.getElementById('productImageInput');
-  const productNameInput = document.getElementById('productNameInput');
-  const productDescInput = document.getElementById('productDescInput');
-  const productPriceInput = document.getElementById('productPriceInput');
-  const logoUpload = document.getElementById('logoUpload');
-  const colorPickerMain = document.getElementById('colorPickerMain');
-  const colorPickerAccent = document.getElementById('colorPickerAccent');
-  const colorPickerBg = document.getElementById('colorPickerBg');
-  const colorPickerText = document.getElementById('colorPickerText');
-  const saveCustomizationBtn = document.getElementById('saveCustomizationBtn');
-  const siteLogo = document.getElementById('siteLogo');
-  const whatsappInput = document.getElementById('whatsappInput');
-  const whatsappContact = document.getElementById('whatsappContact');
-  const bankInput = document.getElementById('bankInput');
-  const bankDetailsDisplay = document.getElementById('bankDetails');
-  const customMessageInput = document.getElementById('customMessageInput');
-  const saveMessageBtn = document.getElementById('saveMessageBtn');
-  const cartCount = document.getElementById('cartCount');
-  const viewCartBtn = document.getElementById('viewCartBtn');
-  const checkoutSection = document.getElementById('checkoutSection');
-  const mockPayBtn = document.getElementById('mockPayBtn');
-  const backToShopBtn = document.getElementById('backToShopBtn');
-  const paginationDiv = document.getElementById('pagination');
+  // URL path routing
+  const path = window.location.pathname.toLowerCase();
 
-  const productsPerPage = 6;
-  let currentPage = 1;
-
-  function saveData() {
-    localStorage.setItem('ee_products', JSON.stringify(products));
-    localStorage.setItem('ee_customization', JSON.stringify(customization));
-    localStorage.setItem('ee_cart', JSON.stringify(cart));
+  // Helpers
+  function qs(sel) { return document.querySelector(sel); }
+  function qsa(sel) { return document.querySelectorAll(sel); }
+  function show(el) { el.classList.remove("hidden"); }
+  function hide(el) { el.classList.add("hidden"); }
+  function saveToLS(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+  function getFromLS(key, def=null) {
+    try {
+      const val = localStorage.getItem(key);
+      if(val) return JSON.parse(val);
+      return def;
+    } catch { return def; }
   }
 
-  function renderProducts() {
-    productGrid.innerHTML = '';
-    if(products.length === 0){
-      productGrid.innerHTML = '<p>No products available.</p>';
-      paginationDiv.innerHTML = '';
+  // Admin auth keys in localStorage: adminEmail, adminPassHash (simple hash function used)
+  // Store keys: products, orders, settings, customers, cart
+
+  // Simple hash function for demo purposes (DO NOT USE IN PRODUCTION)
+  function simpleHash(str) {
+    let hash=0;
+    for(let i=0;i<str.length;i++){
+      hash=((hash<<5)-hash)+str.charCodeAt(i);
+      hash |= 0;
+    }
+    return hash.toString();
+  }
+
+  // Initial UI elements
+  const header = qs('header');
+  const storeLogoImg = qs('#storeLogo');
+  const storeNameTitle = qs('#storeNameTitle');
+  const darkToggleBtn = qs('#darkModeToggle');
+  const cartBtn = qs('#cartBtn');
+  const cartCountSpan = qs('#cartCount');
+  const logoutBtn = qs('#logoutBtn');
+
+  // Admin UI
+  const adminLoginSection = qs('#adminLogin');
+  const adminLoginForm = qs('#adminLoginForm');
+  const adminLoginTitle = qs('#adminLoginTitle');
+  const adminEmailInput = qs('#adminEmail');
+  const adminPasswordInput = qs('#adminPassword');
+  const adminPanelSection = qs('#adminPanel');
+  const adminLogoutBtn = qs('#adminLogoutBtn');
+  const storeSettingsForm = qs('#storeSettingsForm');
+  const storeNameInput = qs('#storeNameInput');
+  const storeLogoInput = qs('#storeLogoInput');
+  const bankDetailsInput = qs('#bankDetailsInput');
+  const whatsappLinkInput = qs('#whatsappLinkInput');
+  const adminAccountForm = qs('#adminAccountForm');
+  const adminEmailChange = qs('#adminEmailChange');
+  const adminPasswordChange = qs('#adminPasswordChange');
+  const productForm = qs('#productForm');
+  const productNameInput = qs('#productNameInput');
+  const productPriceInput = qs('#productPriceInput');
+  const productDescriptionInput = qs('#productDescriptionInput');
+  const productAvailabilityInput = qs('#productAvailabilityInput');
+  const productColorsInput = qs('#productColorsInput');
+  const productSizesInput = qs('#productSizesInput');
+  const productImageInput = qs('#productImageInput');
+  const adminProductList = qs('#adminProductList');
+  const ordersList = qs('#ordersList');
+
+  // Shop UI
+  const shopAreaSection = qs('#shopArea');
+  const collectionsFilter = qs('#collectionSelect');
+  const shopProductsContainer = qs('#shopProducts');
+  const paginationControls = qs('#paginationControls');
+  const customerLoginBtn = qs('#customerLoginBtn');
+
+  // Customer login UI
+  const customerLoginSection = qs('#customerLogin');
+  const customerLoginForm = qs('#customerLoginForm');
+  const customerNameInput = qs('#customerNameInput');
+  const customerEmailInput = qs('#customerEmailInput');
+  const customerPhoneInput = qs('#customerPhoneInput');
+
+  // Cart UI
+  const cartSection = qs('#cartSection');
+  const cartItemsContainer = qs('#cartItems');
+  const cartTotalDiv = qs('#cartTotal');
+  const checkoutBtn = qs('#checkoutBtn');
+  const backToShopBtn = qs('#backToShopBtn');
+
+  // Checkout UI
+  const checkoutSection = qs('#checkoutSection');
+  const checkoutBankDetailsDiv = qs('#checkoutBankDetails');
+  const confirmPaymentBtn = qs('#confirmPaymentBtn');
+  const cancelCheckoutBtn = qs('#cancelCheckoutBtn');
+
+  // Confirmation Popup UI
+  const confirmationPopup = qs('#confirmationPopup');
+  const closeConfirmationBtn = qs('#closeConfirmationBtn');
+
+  // WhatsApp Icon
+  const whatsappIcon = qs('#whatsappIcon');
+
+  // State variables
+  let adminLoggedIn = false;
+  let currentAdminEmail = null;
+  let products = getFromLS('products', []);
+  let orders = getFromLS('orders', []);
+  let settings = getFromLS('settings', {
+    storeName: 'My Naira Store',
+    storeLogo: '',
+    bankDetails: 'Demo Bank — 0000000000',
+    whatsappLink: '',
+    emailjsServiceId: '',
+    emailjsTemplateId: '',
+  });
+  let customers = getFromLS('customers', []);
+  let cart = getFromLS('cart', []);
+  let currentCustomer = null;
+
+  // Pagination
+  const PRODUCTS_PER_PAGE = 6;
+  let currentPage = 1;
+  let currentCollection = 'all';
+
+  // Initialize theme from localStorage
+  function applyTheme(theme) {
+    if(theme === 'dark'){
+      document.documentElement.setAttribute('data-theme', 'dark');
+      darkToggleBtn.textContent = '☀️ Light Mode';
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      darkToggleBtn.textContent = '🌙 Dark Mode';
+    }
+    localStorage.setItem('theme', theme);
+  }
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme');
+    applyTheme(current === 'dark' ? 'light' : 'dark');
+  }
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  applyTheme(savedTheme);
+  darkToggleBtn.addEventListener('click', toggleTheme);
+
+  // Helper: Validate admin credentials
+  function verifyAdmin(email, pass) {
+    const savedEmail = localStorage.getItem('adminEmail');
+    const savedPassHash = localStorage.getItem('adminPassHash');
+    if(!savedEmail || !savedPassHash) return false;
+    return savedEmail === email && savedPassHash === simpleHash(pass);
+  }
+
+  // Admin login or setup
+  function showAdminLogin(setup=false) {
+    adminLoginTitle.textContent = setup ? 'Admin Setup' : 'Admin Login';
+    adminLoginForm.querySelector('button').textContent = setup ? 'Create Admin Account' : 'Login';
+    show(adminLoginSection);
+    hide(adminPanelSection);
+    hide(shopAreaSection);
+    hide(customerLoginSection);
+    hide(cartSection);
+    hide(checkoutSection);
+    logoutBtn.classList.add('hidden');
+  }
+  function showAdminPanel() {
+    hide(adminLoginSection);
+    show(adminPanelSection);
+    hide(shopAreaSection);
+    hide(customerLoginSection);
+    hide(cartSection);
+    hide(checkoutSection);
+    logoutBtn.classList.remove('hidden');
+  }
+  // Customer shopping area UI
+  function showShopArea() {
+    hide(adminLoginSection);
+    hide(adminPanelSection);
+    show(shopAreaSection);
+    hide(customerLoginSection);
+    hide(cartSection);
+    hide(checkoutSection);
+    logoutBtn.classList.add('hidden');
+    renderStoreHeader();
+    renderCollectionsFilter();
+    renderProducts();
+    renderCartCount();
+    updateWhatsAppIcon();
+  }
+  // Customer login UI
+  function showCustomerLogin() {
+    hide(adminLoginSection);
+    hide(adminPanelSection);
+    hide(shopAreaSection);
+    show(customerLoginSection);
+    hide(cartSection);
+    hide(checkoutSection);
+  }
+  // Cart UI
+  function showCart() {
+    hide(adminLoginSection);
+    hide(adminPanelSection);
+    hide(shopAreaSection);
+    hide(customerLoginSection);
+    show(cartSection);
+    hide(checkoutSection);
+    renderCart();
+  }
+  // Checkout UI
+  function showCheckout() {
+    hide(adminLoginSection);
+    hide(adminPanelSection);
+    hide(shopAreaSection);
+    hide(customerLoginSection);
+    hide(cartSection);
+    show(checkoutSection);
+    renderCheckout();
+  }
+
+  // Render functions
+  function renderStoreHeader(){
+    storeNameTitle.textContent = settings.storeName || 'My Naira Store';
+    if(settings.storeLogo){
+      storeLogoImg.src = settings.storeLogo;
+      storeLogoImg.classList.remove('hidden');
+    } else {
+      storeLogoImg.classList.add('hidden');
+    }
+  }
+
+  function renderCollectionsFilter(){
+    const collections = new Set();
+    products.forEach(p => {
+      if(p.colors) p.colors.split(',').forEach(c => collections.add(c.trim()));
+      if(p.sizes) p.sizes.split(',').forEach(s => collections.add(s.trim()));
+    });
+    const prevVal = collectionsFilter.value;
+    collectionsFilter.innerHTML = '<option value="all">All Collections</option>';
+    collections.forEach(c => {
+      collectionsFilter.insertAdjacentHTML('beforeend', `<option value="${c}">${c}</option>`);
+    });
+    collectionsFilter.value = prevVal && collectionsFilter.querySelector(`option[value="${prevVal}"]`) ? prevVal : 'all';
+  }
+
+  // Filter products by collection (color or size)
+  function filterProductsByCollection() {
+    if(currentCollection === 'all') return products;
+    return products.filter(p => {
+      const colors = p.colors ? p.colors.toLowerCase().split(',').map(x=>x.trim()) : [];
+      const sizes = p.sizes ? p.sizes.toLowerCase().split(',').map(x=>x.trim()) : [];
+      return colors.includes(currentCollection.toLowerCase()) || sizes.includes(currentCollection.toLowerCase());
+    });
+  }
+
+  function renderProducts(){
+    const filtered = filterProductsByCollection();
+    const totalPages = Math.ceil(filtered.length / PRODUCTS_PER_PAGE);
+    if(currentPage > totalPages) currentPage = 1;
+
+    const start = (currentPage -1)*PRODUCTS_PER_PAGE;
+    const paginated = filtered.slice(start, start+PRODUCTS_PER_PAGE);
+
+    shopProductsContainer.innerHTML = '';
+    if(paginated.length === 0){
+      shopProductsContainer.innerHTML = '<p>No products found in this collection.</p>';
+      paginationControls.innerHTML = '';
       return;
     }
-    const start = (currentPage - 1) * productsPerPage;
-    const end = start + productsPerPage;
-    const pageProducts = products.slice(start, end);
+    paginated.forEach(p => {
+      const availClass = p.availability === "true" ? 'instock' : 'outstock';
+      const availText = p.availability === "true" ? 'In Stock' : 'Out of Stock';
+      const colorsDisplay = p.colors ? p.colors.split(',').map(c => c.trim()).join(', ') : 'N/A';
+      const sizesDisplay = p.sizes ? p.sizes.split(',').map(s => s.trim()).join(', ') : 'N/A';
 
-    pageProducts.forEach((p, idx) => {
-      const card = document.createElement('div');
-      card.className = 'product-card';
-      card.innerHTML = `
+      const productCard = document.createElement('div');
+      productCard.className = 'product-card';
+      productCard.innerHTML = `
         <img src="${p.image}" alt="${p.name}" />
         <h3>${p.name}</h3>
-        <p>${p.description}</p>
-        <p><strong>₦${p.price.toFixed(2)}</strong></p>
-        <button data-index="${start + idx}">Add to Cart</button>
+        <div class="price">₦${Number(p.price).toLocaleString()}</div>
+        <div class="availability ${availClass}">${availText}</div>
+        <div><strong>Colors:</strong> ${colorsDisplay}</div>
+        <div><strong>Sizes:</strong> ${sizesDisplay}</div>
+        <button ${p.availability !== "true" ? 'disabled' : ''} data-id="${p.id}">Add to Cart</button>
       `;
-      productGrid.appendChild(card);
+      shopProductsContainer.appendChild(productCard);
+    });
+    renderPagination(totalPages);
+  }
+
+  function renderPagination(totalPages){
+    paginationControls.innerHTML = '';
+    if(totalPages <= 1) return;
+    for(let i=1;i<=totalPages;i++){
+      const btn = document.createElement('button');
+      btn.textContent = i;
+      btn.disabled = (i === currentPage);
+      btn.addEventListener('click', () => {
+        currentPage = i;
+        renderProducts();
+      });
+      paginationControls.appendChild(btn);
+    }
+  }
+
+  function renderCartCount(){
+    cartCountSpan.textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+  }
+
+  // Add product to cart prompt options (color, size, qty)
+  function addToCartPrompt(productId){
+    const product = products.find(p => p.id === productId);
+    if(!product) return alert('Product not found');
+
+    let selectedColor = null;
+    let selectedSize = null;
+    let quantity = 1;
+
+    // Create modal prompt for options
+    const modal = document.createElement('div');
+    modal.style.position = 'fixed';
+    modal.style.top = '0'; modal.style.left = '0';
+    modal.style.width = '100vw'; modal.style.height = '100vh';
+    modal.style.background = 'rgba(0,0,0,0.4)';
+    modal.style.display = 'flex';
+    modal.style.alignItems = 'center';
+    modal.style.justifyContent = 'center';
+    modal.style.zIndex = '10000';
+
+    modal.innerHTML = `
+      <div style="background: var(--bg); padding: 1.5rem; border-radius: 10px; width: 320px; max-width: 90vw; box-sizing: border-box;">
+        <h3>Add "${product.name}" to Cart</h3>
+        <form id="addCartForm">
+          <label>Color</label>
+          <select id="colorSelect" ${!product.colors ? 'disabled' : ''}>
+            ${product.colors ? `<option value="">Select color</option>` + product.colors.split(',').map(c => `<option value="${c.trim()}">${c.trim()}</option>`).join('') : '<option>N/A</option>'}
+          </select>
+          <label>Size</label>
+          <select id="sizeSelect" ${!product.sizes ? 'disabled' : ''}>
+            ${product.sizes ? `<option value="">Select size</option>` + product.sizes.split(',').map(s => `<option value="${s.trim()}">${s.trim()}</option>`).join('') : '<option>N/A</option>'}
+          </select>
+          <label>Quantity</label>
+          <input type="number" id="qtyInput" min="1" value="1" />
+          <div style="margin-top:1rem; text-align: right;">
+            <button type="submit" style="margin-right: 0.5rem;">Add</button>
+            <button type="button" id="cancelAddCart">Cancel</button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    const addCartForm = modal.querySelector('#addCartForm');
+    const cancelBtn = modal.querySelector('#cancelAddCart');
+
+    addCartForm.addEventListener('submit', e => {
+      e.preventDefault();
+      selectedColor = modal.querySelector('#colorSelect').value;
+      selectedSize = modal.querySelector('#sizeSelect').value;
+      quantity = parseInt(modal.querySelector('#qtyInput').value);
+
+      if(product.colors && !selectedColor) return alert('Please select a color');
+      if(product.sizes && !selectedSize) return alert('Please select a size');
+      if(quantity <= 0) return alert('Quantity must be at least 1');
+
+      // Add or update cart
+      let existingItemIndex = cart.findIndex(i =>
+        i.productId === productId &&
+        i.color === selectedColor &&
+        i.size === selectedSize
+      );
+      if(existingItemIndex > -1){
+        cart[existingItemIndex].qty += quantity;
+      } else {
+        cart.push({
+          productId,
+          name: product.name,
+          price: product.price,
+          color: selectedColor,
+          size: selectedSize,
+          qty: quantity,
+          image: product.image
+        });
+      }
+      saveToLS('cart', cart);
+      renderCartCount();
+      alert('Added to cart!');
+      document.body.removeChild(modal);
     });
 
-    const totalPages = Math.ceil(products.length / productsPerPage);
-    paginationDiv.innerHTML = '';
-    if(totalPages > 1){
-      for(let i = 1; i <= totalPages; i++){
-        const btn = document.createElement('button');
-        btn.textContent = i;
-        if(i === currentPage) btn.disabled = true;
-        btn.addEventListener('click', () => {
-          currentPage = i;
-          renderProducts();
-        });
-        paginationDiv.appendChild(btn);
+    cancelBtn.addEventListener('click', () => {
+      document.body.removeChild(modal);
+    });
+  }
+
+  // Render cart items
+  function renderCart(){
+    if(cart.length === 0){
+      cartItemsContainer.innerHTML = '<p>Your cart is empty.</p>';
+      cartTotalDiv.textContent = 'Total: ₦0';
+      return;
+    }
+    cartItemsContainer.innerHTML = '';
+    cart.forEach((item, index) => {
+      const itemTotal = item.qty * Number(item.price);
+      const cartItemDiv = document.createElement('div');
+      cartItemDiv.className = 'cart-item';
+      cartItemDiv.innerHTML = `
+        <img src="${item.image}" alt="${item.name}" style="height:50px; width:50px; object-fit:contain; border-radius:5px;" />
+        <div class="cart-item-details">
+          <strong>${item.name}</strong><br/>
+          <small>Color: ${item.color || 'N/A'}, Size: ${item.size || 'N/A'}</small><br/>
+          <small>₦${Number(item.price).toLocaleString()} × </small>
+          <input type="number" min="1" value="${item.qty}" class="cart-item-qty" data-index="${index}" />
+          <small> = ₦${itemTotal.toLocaleString()}</small>
+        </div>
+        <button data-index="${index}" aria-label="Remove item from cart">Remove</button>
+      `;
+      cartItemsContainer.appendChild(cartItemDiv);
+    });
+    const totalAmount = cart.reduce((sum, i) => sum + i.qty * Number(i.price), 0);
+    cartTotalDiv.textContent = `Total: ₦${totalAmount.toLocaleString()}`;
+  }
+
+  // Cart event listeners for qty change and remove
+  cartItemsContainer.addEventListener('input', e => {
+    if(e.target.classList.contains('cart-item-qty')){
+      const idx = Number(e.target.dataset.index);
+      let val = parseInt(e.target.value);
+      if(isNaN(val) || val < 1) val = 1;
+      cart[idx].qty = val;
+      saveToLS('cart', cart);
+      renderCartCount();
+      renderCart();
+    }
+  });
+  cartItemsContainer.addEventListener('click', e => {
+    if(e.target.tagName === 'BUTTON' && e.target.dataset.index){
+      const idx = Number(e.target.dataset.index);
+      cart.splice(idx,1);
+      saveToLS('cart', cart);
+      renderCartCount();
+      renderCart();
+    }
+  });
+
+  // Render checkout section
+  function renderCheckout(){
+    checkoutBankDetailsDiv.textContent = settings.bankDetails || 'Bank details not set.';
+  }
+
+  // Handle confirm payment
+  function confirmPayment(){
+    if(!currentCustomer){
+      alert('No customer info found. Please login again.');
+      showCustomerLogin();
+      return;
+    }
+    if(cart.length === 0){
+      alert('Cart is empty.');
+      showShopArea();
+      return;
+    }
+    // Create order
+    const orderId = 'ORD' + Date.now();
+    const newOrder = {
+      id: orderId,
+      customer: currentCustomer,
+      items: cart,
+      total: cart.reduce((sum, i) => sum + i.qty * Number(i.price), 0),
+      status: 'PENDING',
+      createdAt: new Date().toISOString(),
+    };
+    orders.push(newOrder);
+    saveToLS('orders', orders);
+    cart = [];
+    saveToLS('cart', cart);
+    renderCartCount();
+    showConfirmationPopup();
+
+    // Send emails via EmailJS if configured
+    if(settings.emailjsServiceId && settings.emailjsTemplateId){
+      // Send email to store owner
+      emailjs.send(settings.emailjsServiceId, settings.emailjsTemplateId, {
+        order_id: newOrder.id,
+        customer_name: newOrder.customer.name,
+        customer_email: newOrder.customer.email,
+        customer_phone: newOrder.customer.phone,
+        items: JSON.stringify(newOrder.items),
+        total: `₦${newOrder.total.toLocaleString()}`,
+        status: newOrder.status
+      }).then(() => {
+        console.log('Order email sent to store owner.');
+      }).catch(e => console.error('EmailJS error:', e));
+      // Optionally, send confirmation email to customer here with another template
+    }
+  }
+
+  function showConfirmationPopup(){
+    confirmationPopup.style.display = 'flex';
+  }
+  function hideConfirmationPopup(){
+    confirmationPopup.style.display = 'none';
+  }
+
+  // Admin Products Render
+  function renderAdminProducts(){
+    if(products.length === 0){
+      adminProductList.innerHTML = '<p>No products added yet.</p>';
+      return;
+    }
+    adminProductList.innerHTML = '';
+    products.forEach((p, i) => {
+      const availClass = p.availability === "true" ? 'instock' : 'outstock';
+      const availText = p.availability === "true" ? 'In Stock' : 'Out of Stock';
+
+      const div = document.createElement('div');
+      div.className = 'admin-product';
+      div.innerHTML = `
+        <img src="${p.image}" alt="${p.name}" />
+        <div class="admin-product-details">
+          <strong>${p.name}</strong><br/>
+          ₦${Number(p.price).toLocaleString()} - <span class="${availClass}">${availText}</span><br/>
+          Colors: ${p.colors || 'N/A'}<br/>
+          Sizes: ${p.sizes || 'N/A'}
+        </div>
+        <div class="admin-product-actions">
+          <button data-index="${i}" class="editProductBtn">Edit</button>
+          <button data-index="${i}" class="deleteProductBtn">Delete</button>
+        </div>
+      `;
+      adminProductList.appendChild(div);
+    });
+  }
+
+  // Admin Orders Render
+  function renderOrders(){
+    if(orders.length === 0){
+      ordersList.innerHTML = '<p>No orders yet.</p>';
+      return;
+    }
+    ordersList.innerHTML = '';
+    orders.forEach((order, idx) => {
+      const itemsDesc = order.items.map(i => `${i.name} (Color: ${i.color}, Size: ${i.size}, Qty: ${i.qty})`).join('<br/>');
+      const orderDiv = document.createElement('div');
+      orderDiv.style.borderBottom = '1.5px solid var(--border)';
+      orderDiv.style.padding = '0.7rem 0';
+      orderDiv.innerHTML = `
+        <strong>Order ID:</strong> ${order.id}<br/>
+        <strong>Customer:</strong> ${order.customer.name} (${order.customer.email}, ${order.customer.phone})<br/>
+        <strong>Items:</strong><br/>${itemsDesc}<br/>
+        <strong>Total:</strong> ₦${Number(order.total).toLocaleString()}<br/>
+        <strong>Status:</strong> ${order.status}<br/>
+        <button data-index="${idx}" class="markPaidBtn" ${order.status==='PAID'?'disabled':''}>Mark Paid</button>
+      `;
+      ordersList.appendChild(orderDiv);
+    });
+  }
+
+  // Utility to convert uploaded file to base64
+  function fileToBase64(file){
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = e => reject(e);
+      reader.readAsDataURL(file);
+    });
+  }
+
+  // Initialization
+  function init(){
+    // Check if admin account exists
+    const adminEmailStored = localStorage.getItem('adminEmail');
+    const adminPassHashStored = localStorage.getItem('adminPassHash');
+
+    if(!adminEmailStored || !adminPassHashStored){
+      // Setup mode
+      showAdminLogin(true);
+    } else {
+      // Check path for /admin or /shop
+      if(path === '/admin'){
+        // Need login first
+        showAdminLogin(false);
+      } else if(path === '/shop' || path === '/'){
+        showShopArea();
+      } else {
+        // fallback to shop
+        showShopArea();
       }
     }
+    renderStoreHeader();
   }
+  init();
 
-  function updateCartCount() {
-    cartCount.textContent = cart.length;
-  }
-
-  function addToCart(index) {
-    cart.push(products[index]);
-    updateCartCount();
-    saveData();
-    alert('Product added to cart!');
-  }
-
-  function showCheckout() {
-    customerView.innerHTML = '';
-    checkoutSection.classList.remove('hidden');
-    bankDetailsDisplay.textContent = customization.bankDetails || 'No bank details provided.';
-  }
-
-  function hideCheckout() {
-    checkoutSection.classList.add('hidden');
-    // Rebuild customer view content
-    customerView.innerHTML = '';
-    customerView.appendChild(productGrid);
-    customerView.appendChild(paginationDiv);
-    customerView.appendChild(document.getElementById('messageBox'));
-  }
-
-  function updateCustomizationUI() {
-    colorPickerMain.value = customization.mainColor;
-    colorPickerAccent.value = customization.accentColor;
-    colorPickerBg.value = customization.bgColor;
-    colorPickerText.value = customization.textColor;
-    siteLogo.src = customization.logoDataUrl || '';
-    whatsappInput.value = customization.whatsapp;
-    bankInput.value = customization.bankDetails;
-    customMessageInput.value = customization.customMessage;
-    updateThemeColors();
-    updateWhatsAppContact();
-    renderMessage();
-  }
-
-  function updateThemeColors() {
-    document.documentElement.style.setProperty('--main-color', customization.mainColor);
-    document.documentElement.style.setProperty('--accent-color', customization.accentColor);
-    document.documentElement.style.setProperty('--bg-color', customization.bgColor);
-    document.documentElement.style.setProperty('--text-color', customization.textColor);
-  }
-
-  function updateWhatsAppContact() {
-    if(customization.whatsapp){
-      const cleanNum = customization.whatsapp.replace(/\D/g,'');
-      whatsappContact.href = `https://wa.me/${cleanNum}`;
-      whatsappContact.classList.remove('hidden');
-    } else {
-      whatsappContact.classList.add('hidden');
+  // Admin login form
+  adminLoginForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = adminEmailInput.value.trim().toLowerCase();
+    const pass = adminPasswordInput.value.trim();
+    if(!email || !pass){
+      alert('Please enter email and password.');
+      return;
     }
-  }
-
-  function renderMessage() {
-    const messageBox = document.getElementById('messageBox');
-    messageBox.textContent = customization.customMessage;
-  }
-
-  // Event Listeners
-
-  adminLoginBtn.addEventListener('click', () => {
-    adminLoginModal.classList.remove('hidden');
-    adminPasswordInput.value = '';
-    loginError.textContent = '';
-  });
-
-  adminLoginCancelBtn.addEventListener('click', () => {
-    adminLoginModal.classList.add('hidden');
-  });
-
-  adminLoginSubmitBtn.addEventListener('click', () => {
-    const enteredPassword = adminPasswordInput.value.trim();
-    if (enteredPassword === adminPassword) {
-      adminLoggedIn = true;
-      adminLoginModal.classList.add('hidden');
-      adminLoginBtn.classList.add('hidden');
-      adminLogoutBtn.classList.remove('hidden');
-      adminPanel.classList.remove('hidden');
-      updateCartCount();
-      updateCustomizationUI();
-      renderProducts();
-      loginError.textContent = '';
+    if(localStorage.getItem('adminEmail')){
+      // login mode
+      if(verifyAdmin(email, pass)){
+        adminLoggedIn = true;
+        currentAdminEmail = email;
+        adminEmailInput.value = '';
+        adminPasswordInput.value = '';
+        showAdminPanel();
+        loadAdminData();
+      } else {
+        alert('Invalid admin credentials.');
+      }
     } else {
-      loginError.textContent = 'Incorrect password!';
+      // setup mode
+      localStorage.setItem('adminEmail', email);
+      localStorage.setItem('adminPassHash', simpleHash(pass));
+      alert('Admin account created. Please log in.');
+      showAdminLogin(false);
     }
   });
 
+  // Admin logout buttons
   adminLogoutBtn.addEventListener('click', () => {
     adminLoggedIn = false;
-    adminLoginBtn.classList.remove('hidden');
-    adminLogoutBtn.classList.add('hidden');
-    adminPanel.classList.add('hidden');
-    renderProducts();
-    updateCartCount();
+    currentAdminEmail = null;
+    showAdminLogin(false);
+  });
+  logoutBtn.addEventListener('click', () => {
+    adminLoggedIn = false;
+    currentAdminEmail = null;
+    showAdminLogin(false);
   });
 
-  addProductBtn.addEventListener('click', () => {
-    const name = productNameInput.value.trim();
-    const desc = productDescInput.value.trim();
-    const price = parseFloat(productPriceInput.value);
-    if(!name || !desc || isNaN(price) || price < 0){
-      alert('Please fill all product details correctly.');
-      return;
-    }
-    if(productImageInput.files.length === 0){
-      alert('Please select a product image.');
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = function(e){
-      products.push({
-        name,
-        description: desc,
-        price,
-        image: e.target.result,
-      });
-      saveData();
-      renderProducts();
-      productNameInput.value = '';
-      productDescInput.value = '';
-      productPriceInput.value = '';
-      productImageInput.value = '';
-      alert('Product added!');
-    }
-    reader.readAsDataURL(productImageInput.files[0]);
-  });
+  // Load admin data into forms
+  function loadAdminData(){
+    storeNameInput.value = settings.storeName || '';
+    bankDetailsInput.value = settings.bankDetails || '';
+    whatsappLinkInput.value = settings.whatsappLink || '';
+    adminEmailChange.value = localStorage.getItem('adminEmail') || '';
+    adminPasswordChange.value = '';
+    renderAdminProducts();
+    renderOrders();
+    renderStoreHeader();
+    updateWhatsAppIcon();
+  }
 
-  saveCustomizationBtn.addEventListener('click', () => {
-    customization.mainColor = colorPickerMain.value;
-    customization.accentColor = colorPickerAccent.value;
-    customization.bgColor = colorPickerBg.value;
-    customization.textColor = colorPickerText.value;
-    if(logoUpload.files.length > 0){
-      const reader = new FileReader();
-      reader.onload = function(e){
-        customization.logoDataUrl = e.target.result;
-        siteLogo.src = customization.logoDataUrl;
-        saveData();
+  // Store Settings form submit
+  storeSettingsForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    settings.storeName = storeNameInput.value.trim() || 'My Naira Store';
+    settings.bankDetails = bankDetailsInput.value.trim() || 'Demo Bank — 0000000000';
+    settings.whatsappLink = whatsappLinkInput.value.trim() || '';
+    // Logo file base64
+    if(storeLogoInput.files.length > 0){
+      const file = storeLogoInput.files[0];
+      try {
+        const base64 = await fileToBase64(file);
+        settings.storeLogo = base64;
+      } catch(e) {
+        alert('Error loading logo image.');
+        return;
       }
-      reader.readAsDataURL(logoUpload.files[0]);
     }
-    customization.whatsapp = whatsappInput.value.trim();
-    customization.bankDetails = bankInput.value.trim();
-    saveData();
-    updateThemeColors();
-    updateWhatsAppContact();
-    alert('Customization saved!');
+    saveToLS('settings', settings);
+    alert('Store settings saved.');
+    renderStoreHeader();
+    updateWhatsAppIcon();
   });
 
-  saveMessageBtn.addEventListener('click', () => {
-    customization.customMessage = customMessageInput.value.trim();
-    saveData();
-    renderMessage();
-    alert('Message saved!');
-  });
-
-  productGrid.addEventListener('click', e => {
-    if(e.target.tagName === 'BUTTON'){
-      const index = parseInt(e.target.dataset.index);
-      addToCart(index);
+  // Admin Account change form
+  adminAccountForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const newEmail = adminEmailChange.value.trim().toLowerCase();
+    const newPass = adminPasswordChange.value.trim();
+    if(newEmail){
+      localStorage.setItem('adminEmail', newEmail);
     }
+    if(newPass){
+      localStorage.setItem('adminPassHash', simpleHash(newPass));
+    }
+    alert('Admin account updated.');
+    adminEmailChange.value = '';
+    adminPasswordChange.value = '';
   });
 
-  viewCartBtn.addEventListener('click', () => {
-    if(cart.length === 0){
-      alert('Your cart is empty!');
+  // Product image upload preview & base64 conversion on add/edit
+  let currentEditProductIndex = null;
+
+  productForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const name = productNameInput.value.trim();
+    const price = Number(productPriceInput.value);
+    const description = productDescriptionInput.value.trim();
+    const availability = productAvailabilityInput.value;
+    const colors = productColorsInput.value.trim();
+    const sizes = productSizesInput.value.trim();
+    let imageBase64 = null;
+
+    if(!name || !price || !productAvailabilityInput.value) {
+      alert('Please fill required fields.');
       return;
     }
+
+    if(productImageInput.files.length > 0){
+      try {
+        imageBase64 = await fileToBase64(productImageInput.files[0]);
+      } catch {
+        alert('Failed to load product image.');
+        return;
+      }
+    } else if(currentEditProductIndex !== null){
+      imageBase64 = products[currentEditProductIndex].image;
+    } else {
+      alert('Please upload a product image.');
+      return;
+    }
+
+    if(currentEditProductIndex !== null){
+      // update existing
+      products[currentEditProductIndex] = {
+        ...products[currentEditProductIndex],
+        name, price, description, availability, colors, sizes, image: imageBase64
+      };
+      alert('Product updated.');
+      currentEditProductIndex = null;
+      productForm.querySelector('#addProductBtn').textContent = 'Add Product';
+    } else {
+      // add new
+      products.push({
+        id: 'P' + Date.now(),
+        name, price, description, availability, colors, sizes, image: imageBase64
+      });
+      alert('Product added.');
+    }
+
+    saveToLS('products', products);
+    renderAdminProducts();
+    productForm.reset();
+  });
+
+  // Edit / Delete product buttons
+  adminProductList.addEventListener('click', async (e) => {
+    if(e.target.classList.contains('editProductBtn')){
+      const idx = Number(e.target.dataset.index);
+      currentEditProductIndex = idx;
+      const p = products[idx];
+      productNameInput.value = p.name;
+      productPriceInput.value = p.price;
+      productDescriptionInput.value = p.description;
+      productAvailabilityInput.value = p.availability;
+      productColorsInput.value = p.colors;
+      productSizesInput.value = p.sizes;
+      productForm.querySelector('#addProductBtn').textContent = 'Update Product';
+      window.scrollTo({top:0,behavior:'smooth'});
+    } else if(e.target.classList.contains('deleteProductBtn')){
+      const idx = Number(e.target.dataset.index);
+      if(confirm('Delete this product?')){
+        products.splice(idx,1);
+        saveToLS('products', products);
+        renderAdminProducts();
+      }
+    }
+  });
+
+  // Orders mark paid button
+  ordersList.addEventListener('click', (e) => {
+    if(e.target.classList.contains('markPaidBtn')){
+      const idx = Number(e.target.dataset.index);
+      const order = orders[idx];
+      if(order.status !== 'PAID'){
+        order.status = 'PAID';
+        saveToLS('orders', orders);
+        renderOrders();
+        alert(`Order ${order.id} marked as PAID.`);
+        // Optionally, send payment confirmation email to customer here
+      }
+    }
+  });
+
+  // Shop add to cart buttons
+  shopProductsContainer.addEventListener('click', e => {
+    if(e.target.tagName === 'BUTTON' && e.target.dataset.id){
+      const id = e.target.dataset.id;
+      addToCartPrompt(id);
+    }
+  });
+
+  // Collections filter change
+  collectionsFilter.addEventListener('change', () => {
+    currentCollection = collectionsFilter.value;
+    currentPage = 1;
+    renderProducts();
+  });
+
+  // Cart button click
+  cartBtn.addEventListener('click', () => {
+    if(cart.length === 0){
+      alert('Your cart is empty.');
+      return;
+    }
+    showCart();
+  });
+
+  // Customer login button in shop
+  customerLoginBtn.addEventListener('click', () => {
+    showCustomerLogin();
+  });
+
+  // Customer login form
+  customerLoginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = customerNameInput.value.trim();
+    const email = customerEmailInput.value.trim().toLowerCase();
+    const phone = customerPhoneInput.value.trim();
+    if(!name || !email || !phone){
+      alert('Please fill all fields.');
+      return;
+    }
+    currentCustomer = {name, email, phone};
+    customers.push(currentCustomer);
+    saveToLS('customers', customers);
+    alert('Welcome, ' + name + '! Proceed to your cart.');
+    customerLoginForm.reset();
+    showCart();
+  });
+
+  // Cart buttons
+  checkoutBtn.addEventListener('click', () => {
     showCheckout();
   });
-
   backToShopBtn.addEventListener('click', () => {
-    checkoutSection.classList.add('hidden');
-    renderProducts();
+    showShopArea();
   });
 
-  mockPayBtn.addEventListener('click', () => {
-    alert('Mock payment successful! Thank you for your purchase.');
-    cart = [];
-    saveData();
-    updateCartCount();
-    checkoutSection.classList.add('hidden');
-    renderProducts();
+  cancelCheckoutBtn.addEventListener('click', () => {
+    showCart();
   });
 
-  // Initialize on page load
-  window.addEventListener('load', () => {
-    updateThemeColors();
-    siteLogo.src = customization.logoDataUrl || '';
-    updateWhatsAppContact();
-    renderMessage();
-    renderProducts();
-    updateCartCount();
+  confirmPaymentBtn.addEventListener('click', () => {
+    confirmPayment();
   });
 
+  closeConfirmationBtn.addEventListener('click', () => {
+    hideConfirmationPopup();
+    showShopArea();
+  });
+
+  // Update WhatsApp icon
+  function updateWhatsAppIcon(){
+    if(settings.whatsappLink){
+      whatsappIcon.classList.remove('hidden');
+      whatsappIcon.onclick = () => {
+        window.open(settings.whatsappLink, '_blank');
+      };
+      whatsappIcon.onkeypress = (e) => {
+        if(e.key === 'Enter' || e.key === ' ') whatsappIcon.click();
+      };
+    } else {
+      whatsappIcon.classList.add('hidden');
+    }
+  }
+
+  // Render cart count on load
+  renderCartCount();
+
+  // Routing logic - show admin panel if logged in and path is /admin
+  if(path === '/admin'){
+    if(localStorage.getItem('adminEmail')){
+      showAdminLogin(false);
+    } else {
+      showAdminLogin(true);
+    }
+  } else if(path === '/shop' || path === '/'){
+    showShopArea();
+  } else {
+    showShopArea();
+  }
+})();
 </script>
-
 </body>
 </html>
